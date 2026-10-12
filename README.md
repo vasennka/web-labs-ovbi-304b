@@ -86,18 +86,6 @@ npm start                          # http://127.0.0.1:4000
 | `laba8/progress-app/` | React-приложение (задание 1: ProgressBar). `src/components/ProgressBar.jsx` |
 | `laba8/README.md` | Инструкция + **письменный ответ** на вопрос о различиях опроса / long polling / WebSocket / SSE |
 
-### Проект (тема 25)
-
-| Файл | Что это |
-|---|---|
-| `project/README.md` | **Главный документ**: запуск, структура, обоснование архитектуры и шаблонизатора, описание интеграций и самодельных контролов, таблица «требование ТЗ → где в коде» |
-| `project/DOKLAD.md` | Доклад «Архитектура backend-сервиса с REST API» (тема №2 из списка) с примерами из кода проекта |
-| `doklady/01..07-*.md` | 7 докладов по темам из `Temyi dokladov.txt` + указатель `doklady/README.md` |
-| `ИНСТРУКЦИЯ.md` | Пошаговый запуск всех работ, разбор типовых ошибок, инструкция по выкладке на GitHub |
-| `project/package.json` | Скрипты: `install:all`, `build`, `start`, `dev`, `seed` |
-| `project/backend/` | Node.js + Express + EJS: слои `domain` → `application` → `infrastructure` → `presentation` |
-| `project/frontend/` | React + Vite SPA: галерея, новости, «О студии», контакты, самодельные контролы `Carousel` и `StarRating` |
-
 Подробное дерево файлов проекта — в `project/README.md`, раздел 2.
 
 ---
@@ -122,7 +110,7 @@ npm start                          # http://127.0.0.1:4000
 
 ---
 
-## Кратко о проекте (тема 25)
+## Кратко о проекте 
 
 * **Публичная часть:** React SPA (`/`) + серверные страницы на шаблонизаторе EJS (`/site/`).
 * **Админка:** `/admin/login` — закрыта паролем, cookie-сессия, bcrypt-хеш пароля, CSRF-токены.
