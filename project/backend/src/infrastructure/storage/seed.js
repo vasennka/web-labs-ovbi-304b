@@ -101,7 +101,7 @@ const GALLERY_SEED = [
         title: 'Свадебная прогулка на закате',
         description: 'Двумя камерами: постановочные кадры и репортаж без остановки церемонии.',
         category: 'свадьба',
-        imageUrl: '/demo-photos/gallery-wedding-2.jpg',
+        imageUrl: '/demo-photos/gallery-wedding-2-2.jpg',
         author: 'Даша',
         shotAt: '2026-06-18'
     },
@@ -133,7 +133,7 @@ const GALLERY_SEED = [
         title: 'Керамика и кофе: серия для кофейни',
         description: 'Шесть сцен для меню и соцсетей, единая цветовая схема серии.',
         category: 'предметка',
-        imageUrl: '/demo-photos/gallery-product-2.jpg',
+        imageUrl: '/demo-photos/gallery-product-2-2.jpg',
         author: 'Даша',
         shotAt: '2026-10-03'
     },
