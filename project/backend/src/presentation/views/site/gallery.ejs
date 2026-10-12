@@ -1,6 +1,9 @@
 <%- include('../partials/site-header') %>
 
+<div class="wrap">
+
 <section class="page-head">
+    <p class="eyebrow">Портфолио</p>
     <h1>Галерея работ</h1>
     <p class="lead">Всего работ: <b><%= total %></b>. Фильтр по категории работает через обычный GET-запрос — без JavaScript.</p>
 </section>
@@ -9,22 +12,28 @@
     <label>
         Категория:
         <select name="category" onchange="this.form.submit()">
-            <option value="">все</option>
+            <option value="">все работы</option>
             <% categoriesInUse.forEach(function (category) { %>
                 <option value="<%= category %>" <%= currentCategory === category ? 'selected' : '' %>><%= category %></option>
             <% }); %>
         </select>
     </label>
-    <noscript><button type="submit">Показать</button></noscript>
+    <noscript><button class="btn small" type="submit">Показать</button></noscript>
 </form>
 
-<div class="grid gallery">
+<div class="grid">
     <% items.forEach(function (photo) { %>
         <figure class="card">
-            <img src="<%= photo.imageUrl %>" alt="<%= photo.title %>" loading="lazy">
+            <div class="photo">
+                <img src="<%= photo.imageUrl %>" alt="<%= photo.title %>" loading="lazy">
+                <div class="overlay">
+                    <h3><%= photo.title %></h3>
+                    <p><%= photo.description %></p>
+                </div>
+            </div>
             <figcaption>
                 <b><%= photo.title %></b>
-                <p class="muted"><%= photo.description %></p>
+                <p class="muted small"><%= photo.description %></p>
                 <p class="meta">
                     <span class="tag"><%= photo.category %></span>
                     <%= photo.author %> · <%= photo.shotAt %>
@@ -42,5 +51,7 @@
     <% } %>
 </nav>
 <% } %>
+
+</div>
 
 <%- include('../partials/site-footer') %>

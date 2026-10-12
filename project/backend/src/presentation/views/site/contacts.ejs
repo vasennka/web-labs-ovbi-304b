@@ -1,6 +1,9 @@
 <%- include('../partials/site-header') %>
 
+<div class="wrap">
+
 <section class="page-head">
+    <p class="eyebrow">Связаться</p>
     <h1>Контакты и обратная связь</h1>
     <p class="lead">Форма обратной связи работает без JavaScript: обычный POST и серверная валидация.</p>
 </section>
@@ -16,7 +19,7 @@
             <div class="alert error"><%= errors.form %></div>
         <% } %>
 
-        <form method="post" action="/site/contacts" class="stack" novalidate>
+        <form method="post" action="/site/contacts" class="stack form-card" novalidate>
             <label>
                 Ваше имя *
                 <input type="text" name="name" value="<%= values.name || '' %>" required minlength="2">
@@ -52,11 +55,14 @@
     </section>
 
     <aside>
+        <img src="/demo-photos/contacts-studio-2.jpg" alt="Работа на выездной съёмке" loading="lazy"
+             style="width: 100%; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 22px">
+
         <h2>Как нас найти</h2>
         <table class="kv">
             <tr><th>Адрес</th><td><%= about.address %></td></tr>
             <tr><th>Телефон</th><td><%= about.phone %></td></tr>
-            <tr><th>E-mail</th><td><%= about.email %></td></tr>
+            <tr><th>E-mail</th><td><a href="mailto:<%= about.email %>"><%= about.email %></a></td></tr>
             <tr><th>Часы</th><td><%= about.workHours %></td></tr>
         </table>
 
@@ -69,8 +75,9 @@
             <li>Сообщение появляется в админке в разделе «Обратная связь».</li>
         </ol>
         <p class="muted small">В React-версии та же логика вызывается через
-            <code>POST /api/v1/contact</code> из самодельных контролов формы.</p>
+            <code>POST /api/v1/contact</code> из формы с самодельными контролами.</p>
     </aside>
+</div>
 </div>
 
 <%- include('../partials/site-footer') %>

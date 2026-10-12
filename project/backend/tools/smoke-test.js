@@ -116,10 +116,10 @@ const check = (condition, title, extra = '') => {
 
         /* -------------------- Серверные страницы EJS ----------------- */
         for (const [url, marker] of [
-            ['/site/', 'Фотостудия, которая любит свет'],
+            ['/site/', 'Снимаем людей'],
             ['/site/gallery', 'Галерея работ'],
             ['/site/news', 'Новости студии'],
-            ['/site/about', 'Интеграция №1'],
+            ['/site/about', 'Сторонние сервисы'],
             ['/site/contacts', 'обратная связь']
         ]) {
             res = await fetch(`${BASE}${url}`);
@@ -205,10 +205,27 @@ const check = (condition, title, extra = '') => {
         res = await fetch(`${BASE}/static/site.css`);
         check(res.status === 200, 'GET /static/site.css (статика подключена)');
 
+        res = await fetch(`${BASE}/demo-photos/hero.jpg`);
+        check(res.status === 200 && (res.headers.get('content-type') ?? '').includes('image'),
+            'GET /demo-photos/hero.jpg (фотографии сайта отдаются)');
+
         res = await fetch(`${BASE}/`);
         const spaHtml = await res.text();
         check(res.status === 200 && (spaHtml.includes('id="root"') || spaHtml.includes('Не собран')),
             'GET / (React-SPA или подсказка о сборке)');
+
+        // Проверяем, что файлы сборки отдаются с правильными типами,
+        // иначе браузер откажется запускать приложение (MIME type text/html)
+        const distDir = path.join(__dirname, '..', '..', 'frontend', 'dist', 'assets');
+        if (fs.existsSync(distDir)) {
+            const bundle = fs.readdirSync(distDir).find((file) => file.endsWith('.js'));
+            if (bundle) {
+                res = await fetch(`${BASE}/assets/${bundle}`);
+                const type = res.headers.get('content-type') ?? '';
+                check(res.status === 200 && /javascript/i.test(type),
+                    'GET /assets/*.js (файлы сборки React отдаются с верным типом)', type);
+            }
+        }
 
         res = await fetch(`${BASE}/gallery`);
         check(res.status === 200, 'GET /gallery (SPA-fallback отдаёт index.html)');

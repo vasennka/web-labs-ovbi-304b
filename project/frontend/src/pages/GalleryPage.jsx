@@ -1,9 +1,6 @@
 /**
- * Страница галереи: категории (фильтр), пагинация, карусель + сетка.
- *
- * Обратите внимание на useApi с зависимостями [page, category]:
- * при смене фильтра хук отменяет предыдущий запрос (AbortController)
- * и запускает новый — так мы избегаем «гонок» между ответами.
+ * Галерея: фильтр по категориям (чипсы), пагинация, карточки-фотографии
+ * с подписью поверх снимка при наведении и карусель для быстрого просмотра.
  */
 
 import { useState } from 'react';
@@ -26,10 +23,11 @@ export default function GalleryPage() {
     return (
         <>
             <section className="page-head">
+                <p className="eyebrow">Портфолио</p>
                 <h1>Галерея работ</h1>
                 <p className="lead">
                     Всего работ: {data?.total ?? '…'}. Фильтр и пагинация выполняются на сервере
-                    (query-параметры <code>category</code> и <code>page</code>) — SPA лишь передаёт их в API.
+                    (параметры <code>category</code> и <code>page</code>) — приложение только передаёт их в API.
                 </p>
             </section>
 
@@ -39,7 +37,7 @@ export default function GalleryPage() {
                     className={category === '' ? 'chip active' : 'chip'}
                     onClick={() => { setCategory(''); setPage(1); }}
                 >
-                    все
+                    все работы
                 </button>
                 {(data?.categoriesInUse ?? []).map((item) => (
                     <button
@@ -58,16 +56,27 @@ export default function GalleryPage() {
 
             {!loading && items.length > 0 && (
                 <>
-                    <Carousel items={items} autoPlayMs={0} ariaLabel="Выбранные работы" />
+                    <Carousel items={items} autoPlayMs={0} ariaLabel="Работы этой страницы" />
 
-                    <h2>Все работы этой страницы</h2>
-                    <div className="grid">
+                    <div className="section-head" style={{ marginTop: 34 }}>
+                        <div>
+                            <p className="eyebrow">Сетка</p>
+                            <h2>Все работы страницы</h2>
+                        </div>
+                    </div>
+
+                    <div className="grid gallery-grid">
                         {items.map((photo) => (
                             <figure className="card" key={photo.id}>
-                                <img src={photo.imageUrl} alt={photo.title} loading="lazy" />
+                                <div className="photo">
+                                    <img src={photo.imageUrl} alt={photo.title} loading="lazy" />
+                                    <div className="overlay">
+                                        <h3>{photo.title}</h3>
+                                        <p>{photo.description}</p>
+                                    </div>
+                                </div>
                                 <figcaption>
                                     <b>{photo.title}</b>
-                                    <p className="muted small">{photo.description}</p>
                                     <p className="meta">
                                         <span className="tag">{photo.category}</span>
                                         {photo.author} · {photo.shotAt}

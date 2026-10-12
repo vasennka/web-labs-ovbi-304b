@@ -1,12 +1,21 @@
 <%- include('../partials/site-header') %>
 
+<div class="wrap">
+
 <section class="page-head">
+    <p class="eyebrow">О компании</p>
     <h1><%= about.title %></h1>
-    <p class="lead">Раздел «О себе / О компании». Данные берутся из базы и правятся в админке.</p>
+    <p class="lead">Раздел «О себе / О компании». Данные берутся из базы (файл или SQLite) и правятся в админке без изменения кода.</p>
 </section>
 
 <div class="two-col">
     <section>
+        <div class="photo-stack" style="margin-bottom: 28px">
+            <img src="/demo-photos/about-studio-2.jpg" alt="Студийная площадка на Пресне" loading="lazy">
+            <img src="/demo-photos/gallery-studio-1-2.jpg" alt="Схема постановки света" loading="lazy">
+            <img src="/demo-photos/about-team-2.jpg" alt="Фотографы студии за работой" loading="lazy">
+        </div>
+
         <h2>О студии</h2>
         <% about.text.split('\n').forEach(function (paragraph) { %>
             <p><%= paragraph %></p>
@@ -29,52 +38,54 @@
     </section>
 
     <aside>
+        <img src="/demo-photos/gallery-portrait-1.jpg" alt="Портретная съёмка студии" loading="lazy"
+             style="width: 100%; border-radius: 18px; border: 1px solid var(--border); margin-bottom: 20px">
+
         <!-- ================= ИНТЕГРАЦИИ СО СТОРОННИМИ СЕРВИСАМИ ================= -->
-        <h2>Интеграция №1: GitHub (официальный SDK)</h2>
-        <% if (integrations.github && integrations.github.fullName) { %>
-            <div class="widget <%= integrations.github.degraded ? 'degraded' : '' %>">
-                <p><b><%= integrations.github.fullName %></b></p>
-                <p class="muted"><%= integrations.github.description || '' %></p>
-                <ul class="stats">
-                    <li><span>★</span> <%= integrations.github.stars %></li>
-                    <li><span>⑂</span> <%= integrations.github.forks %></li>
-                    <li><span>!</span> <%= integrations.github.openIssues %></li>
-                </ul>
-                <p class="muted">
+        <div class="section-head">
+            <div>
+                <p class="eyebrow">Интеграции</p>
+                <h2>Сторонние сервисы</h2>
+            </div>
+        </div>
+
+        <div class="widget <%= integrations.github.degraded ? 'degraded' : '' %>">
+            <p><span class="tag accent">SDK</span> <b>GitHub</b> · @octokit/rest</p>
+            <% if (integrations.github && integrations.github.fullName) { %>
+                <p><%= integrations.github.fullName %> · ★ <%= integrations.github.stars %> ·
+                    ⑂ <%= integrations.github.forks %> · ! <%= integrations.github.openIssues %></p>
+                <p class="muted small">
                     Последний push: <%= new Date(integrations.github.lastPush).toLocaleString('ru-RU') %><br>
                     Источник: <%= integrations.github.provider %><br>
-                    <% if (integrations.github.fromCache) { %>из кэша <% } %>
-                    <% if (integrations.github.stale) { %> (данные устарели — сервис недоступен) <% } %>
+                    <% if (integrations.github.fromCache) { %>из кэша (10 минут) <% } %>
+                    <% if (integrations.github.stale) { %> · данные могли устареть <% } %>
                 </p>
                 <p><a href="<%= integrations.github.url %>" target="_blank" rel="noopener">открыть репозиторий →</a></p>
-            </div>
-        <% } else { %>
-            <div class="widget degraded">
+            <% } else { %>
                 <p>GitHub недоступен, показываем заглушку.</p>
-                <p class="muted"><%= integrations.github.message || 'нет соединения' %></p>
-            </div>
-        <% } %>
+                <p class="muted small"><%= integrations.github.message || 'нет соединения' %></p>
+            <% } %>
+        </div>
 
-        <h2>Интеграция №2: погода (клиент поверх fetch)</h2>
-        <% if (integrations.weather && integrations.weather.temperature !== null) { %>
-            <div class="widget">
-                <p class="big"><%= integrations.weather.temperature %>°C</p>
+        <div class="widget <%= integrations.weather.degraded ? 'degraded' : '' %>">
+            <p><span class="tag accent">HTTP</span> <b>Погода</b> · Open-Meteo (fetch)</p>
+            <% if (integrations.weather && integrations.weather.temperature !== null) { %>
+                <p class="big"><%= integrations.weather.temperature %> °C</p>
                 <p><%= integrations.weather.description %>, <%= integrations.weather.city %></p>
-                <p class="muted">
+                <p class="muted small">
                     Ветер: <%= integrations.weather.windSpeed %> м/с<br>
                     Источник: <%= integrations.weather.provider %><br>
                     <% if (integrations.weather.fromCache) { %>из кэша (10 минут) <% } %>
                 </p>
-            </div>
-        <% } else { %>
-            <div class="widget degraded">
+            <% } else { %>
                 <p>Open-Meteo недоступен, показываем заглушку.</p>
-                <p class="muted"><%= integrations.weather.message || 'нет соединения' %></p>
-            </div>
-        <% } %>
+                <p class="muted small"><%= integrations.weather.message || 'нет соединения' %></p>
+            <% } %>
+        </div>
 
         <p class="muted small">Данные получены: <%= new Date(integrations.fetchedAt).toLocaleString('ru-RU') %></p>
     </aside>
+</div>
 </div>
 
 <%- include('../partials/site-footer') %>

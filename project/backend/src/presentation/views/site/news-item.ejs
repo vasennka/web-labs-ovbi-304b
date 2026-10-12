@@ -1,10 +1,12 @@
 <%- include('../partials/site-header') %>
 
+<div class="wrap">
+
 <article class="article">
     <p class="breadcrumbs"><a href="/site/news">← все новости</a></p>
     <h1><%= news.title %></h1>
     <p class="meta">
-        <%= new Date(news.publishedAt).toLocaleString('ru-RU') %>
+        <time><%= new Date(news.publishedAt).toLocaleString('ru-RU') %></time>
         <% (news.tags || []).forEach(function (t) { %><span class="tag"><%= t %></span><% }); %>
     </p>
 
@@ -16,8 +18,17 @@
         <% if (paragraph.trim()) { %><p><%= paragraph %></p><% } %>
     <% }); %>
 
-    <p class="muted small">Адрес страницы (slug): <code><%= news.slug %></code> — этот же ресурс доступен
-        в REST API: <code>GET /api/v1/news/<%= news.slug %></code></p>
+    <div class="hero-actions">
+        <a class="btn primary" href="/site/contacts">Обсудить съёмку</a>
+        <a class="btn" href="/site/news">Другие новости</a>
+    </div>
+
+    <p class="muted small">
+        Адрес страницы (slug): <code><%= news.slug %></code> — этот же ресурс доступен
+        в REST API: <code>GET /api/v1/news/<%= news.slug %></code>
+    </p>
 </article>
+
+</div>
 
 <%- include('../partials/site-footer') %>

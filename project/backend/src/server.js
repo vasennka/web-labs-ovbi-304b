@@ -88,6 +88,13 @@ async function createApp(options = {}) {
 
     // --- Статические файлы -------------------------------------------------
     app.use('/static', express.static(path.join(__dirname, '..', 'public')));
+    // Демонстрационные фотографии сайта (лежат в репозитории, не в загрузках).
+    // Кеш отключён: при замене файлов браузер сразу показывает новые снимки.
+    app.use('/demo-photos', express.static(path.join(__dirname, '..', 'public', 'demo-photos'), {
+        maxAge: 0,
+        etag: true,
+        setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff')
+    }));
     app.use('/uploads', express.static(config.uploads.dir, {
         // Загруженные файлы отдаём как вложения-картинки и без исполнения скриптов
         setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff')
@@ -132,6 +139,15 @@ async function createApp(options = {}) {
     }));
 
     // --- React-SPA ---------------------------------------------------------
+    // Сначала отдаём реальные файлы сборки (assets/*.js, *.css, картинки),
+    // и только потом — fallback на index.html для клиентских маршрутов.
+    // Без этой строки браузер получал бы index.html вместо скрипта и приложение
+    // не запускалось (ошибка «MIME type text/html for module script»).
+    app.use(express.static(config.frontend.distDir, {
+        index: false,
+        maxAge: '1h',
+        setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff')
+    }));
     app.use('/', createSpaRouter({ distDir: config.frontend.distDir }));
 
     // --- Обработка ошибок (обязательно последней) -------------------------

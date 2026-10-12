@@ -176,12 +176,14 @@ export default function Carousel({
                             /* aria-live только у активного слайда — скринридер не «тараторит» */
                             aria-live={i === index ? 'polite' : 'off'}
                         >
-                            <img src={item.imageUrl} alt={item.title} draggable="false" loading="lazy" />
+                            <div className="slide-photo">
+                                <img src={item.imageUrl} alt={item.title} draggable="false" loading="lazy" />
+                            </div>
                             <figcaption>
                                 <h3>{item.title}</h3>
                                 <p>{item.description}</p>
                                 <p className="meta">
-                                    <span className="tag">{item.category}</span>
+                                    <span className="tag accent">{item.category}</span>
                                     {item.author} · {item.shotAt}
                                 </p>
                             </figcaption>

@@ -6,7 +6,7 @@
 
 const { ValidationError } = require('../errors');
 
-const CATEGORIES = ['портрет', 'свадьба', 'репортаж', 'пейзаж', 'студия', 'другое'];
+const CATEGORIES = ['портрет', 'свадьба', 'репортаж', 'пейзаж', 'студия', 'предметка', 'другое'];
 
 function validateGalleryItem(input = {}, { partial = false } = {}) {
     const errors = {};

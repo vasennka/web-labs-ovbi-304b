@@ -1,6 +1,6 @@
 /**
- * «О студии»: текст из базы + демонстрация двух интеграций со сторонними сервисами.
- * Текст правится в админке (раздел «О нас») и приходит из GET /api/v1/about.
+ * «О студии»: текст из базы (правится в админке), фотографии студии
+ * и живые данные из двух сторонних сервисов.
  */
 
 import { api } from '../api/client.js';
@@ -17,10 +17,11 @@ export default function AboutPage() {
     return (
         <>
             <section className="page-head">
+                <p className="eyebrow">О компании</p>
                 <h1>{data?.title ?? 'О студии'}</h1>
                 <p className="lead">
-                    Раздел «О себе / О компании». Данные лежат в базе (файл или SQLite)
-                    и редактируются в админке.
+                    Раздел «О себе / О компании»: текст хранится в базе (файл или SQLite)
+                    и редактируется в админке без правки кода.
                 </p>
             </section>
 
@@ -28,7 +29,13 @@ export default function AboutPage() {
             <ErrorBox error={about.error} onRetry={about.reload} />
 
             <div className="two-col">
-                <section>
+                <div>
+                    <div className="photo-stack" style={{ marginBottom: 30 }}>
+                        <img src="/demo-photos/about-studio-2.jpg" alt="Студийная площадка на Пресне" loading="lazy" />
+                        <img src="/demo-photos/gallery-studio-1-2.jpg" alt="Схема постановки света" loading="lazy" />
+                        <img src="/demo-photos/about-team-2.jpg" alt="Фотографы студии за работой" loading="lazy" />
+                    </div>
+
                     {(data?.text ?? '').split('\n').filter(Boolean).map((paragraph, index) => (
                         <p key={index}>{paragraph}</p>
                     ))}
@@ -47,26 +54,25 @@ export default function AboutPage() {
                         <tr><th>Часы работы</th><td>{data?.workHours}</td></tr>
                         </tbody>
                     </table>
-                </section>
 
-                <section>
+                    <div className="hero-actions">
+                        <a className="btn primary" href="/contacts">Обсудить съёмку</a>
+                        <a className="btn" href="/site/about">Серверная версия страницы (EJS)</a>
+                    </div>
+                </div>
+
+                <div>
+                    <img
+                        src="/demo-photos/gallery-portrait-1.jpg"
+                        alt="Портретная съёмка студии"
+                        loading="lazy"
+                        style={{ width: '100%', borderRadius: 18, border: '1px solid var(--border)', marginBottom: 20 }}
+                    />
+
                     {integrations.loading && <Loader text="Опрашиваем сторонние сервисы…" />}
                     <ErrorBox error={integrations.error} onRetry={integrations.reload} />
                     <IntegrationsPanel data={integrations.data} />
-
-                    <div className="widget">
-                        <h3>Как устроена интеграция</h3>
-                        <p className="muted small">
-                            Бизнес-логика (AboutService) работает с портами
-                            <code>VcsStatsProvider</code> и <code>WeatherProvider</code>.
-                            Реализации лежат в infrastructure: <code>GitHubStatsProvider</code> использует
-                            официальный SDK <code>@octokit/rest</code>, а <code>WeatherProvider</code> —
-                            собственный HTTP-клиент поверх <code>fetch</code> с таймаутом через
-                            <code>AbortController</code>. Ответы кэшируются на 10 минут, при недоступности
-                            сервиса отдаётся кэш или заглушка с флагом <code>degraded</code>.
-                        </p>
-                    </div>
-                </section>
+                </div>
             </div>
         </>
     );

@@ -1,8 +1,11 @@
 <%- include('../partials/site-header') %>
 
+<div class="wrap">
+
 <section class="page-head">
+    <p class="eyebrow">Журнал</p>
     <h1>Новости студии</h1>
-    <p class="lead">Всего записей: <b><%= total %></b>. Фильтр по тегу — ссылками.</p>
+    <p class="lead">Всего записей: <b><%= total %></b>. Фильтр по тегу — обычными ссылками, работает без JavaScript.</p>
 </section>
 
 <% if (tags.length) { %>
@@ -17,12 +20,17 @@
 <div class="news-list">
     <% items.forEach(function (item) { %>
         <article class="card news">
-            <time><%= new Date(item.publishedAt).toLocaleString('ru-RU') %></time>
-            <h2><a href="/site/news/<%= item.slug %>"><%= item.title %></a></h2>
-            <p><%= item.excerpt %></p>
-            <p class="meta">
-                <% (item.tags || []).forEach(function (t) { %><span class="tag"><%= t %></span><% }); %>
-            </p>
+            <a class="cover" href="/site/news/<%= item.slug %>">
+                <img src="<%= item.coverUrl || '/demo-photos/news-1.jpg' %>" alt="<%= item.title %>" loading="lazy">
+            </a>
+            <div class="body">
+                <time><%= new Date(item.publishedAt).toLocaleString('ru-RU') %></time>
+                <h2><a href="/site/news/<%= item.slug %>"><%= item.title %></a></h2>
+                <p><%= item.excerpt %></p>
+                <p class="meta">
+                    <% (item.tags || []).forEach(function (t) { %><span class="tag"><%= t %></span><% }); %>
+                </p>
+            </div>
         </article>
     <% }); %>
 </div>
@@ -35,5 +43,7 @@
     <% } %>
 </nav>
 <% } %>
+
+</div>
 
 <%- include('../partials/site-footer') %>

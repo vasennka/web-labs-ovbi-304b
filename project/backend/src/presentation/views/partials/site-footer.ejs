@@ -3,6 +3,13 @@
     <div class="wrap">
         <div class="footer-nav">
             <div>
+                <span class="logo">PRISMA<span>·</span>studio</span>
+                <p>
+                    Фотостудия полного цикла: портрет, свадьба, репортаж,
+                    предметная съёмка. Своя площадка и выезд по области.
+                </p>
+            </div>
+            <div>
                 <h4>Разделы</h4>
                 <a href="/site/about">О студии</a>
                 <a href="/site/gallery">Галерея</a>
@@ -18,15 +25,16 @@
             <div>
                 <h4>Часы работы</h4>
                 <p><%= about.workHours %></p>
-            </div>
-            <div>
-                <h4>Технологии</h4>
+                <h4 style="margin-top: 18px">Технологии</h4>
                 <p>Node.js + Express + EJS</p>
                 <p>React (SPA) + REST API</p>
                 <p>Интеграции: GitHub SDK, Open-Meteo</p>
             </div>
         </div>
-        <p class="copy">© <%= new Date().getFullYear() %> Фотостудия PRISMA. Учебный проект (тема 25).</p>
+        <p class="copy">
+            © <%= new Date().getFullYear() %> Фотостудия PRISMA. Учебный проект (тема 25).
+            Демонстрационные фотографии — Openverse / Creative Commons (см. demo-photos/ATTRIBUTION.md).
+        </p>
     </div>
 </footer>
 </body>
