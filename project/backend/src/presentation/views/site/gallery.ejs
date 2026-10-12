@@ -1,0 +1,46 @@
+<%- include('../partials/site-header') %>
+
+<section class="page-head">
+    <h1>Галерея работ</h1>
+    <p class="lead">Всего работ: <b><%= total %></b>. Фильтр по категории работает через обычный GET-запрос — без JavaScript.</p>
+</section>
+
+<form class="filters" method="get" action="/site/gallery">
+    <label>
+        Категория:
+        <select name="category" onchange="this.form.submit()">
+            <option value="">все</option>
+            <% categoriesInUse.forEach(function (category) { %>
+                <option value="<%= category %>" <%= currentCategory === category ? 'selected' : '' %>><%= category %></option>
+            <% }); %>
+        </select>
+    </label>
+    <noscript><button type="submit">Показать</button></noscript>
+</form>
+
+<div class="grid gallery">
+    <% items.forEach(function (photo) { %>
+        <figure class="card">
+            <img src="<%= photo.imageUrl %>" alt="<%= photo.title %>" loading="lazy">
+            <figcaption>
+                <b><%= photo.title %></b>
+                <p class="muted"><%= photo.description %></p>
+                <p class="meta">
+                    <span class="tag"><%= photo.category %></span>
+                    <%= photo.author %> · <%= photo.shotAt %>
+                </p>
+            </figcaption>
+        </figure>
+    <% }); %>
+</div>
+
+<% if (pages > 1) { %>
+<nav class="pagination">
+    <% for (let p = 1; p <= pages; p++) { %>
+        <a class="<%= p === page ? 'active' : '' %>"
+           href="/site/gallery?page=<%= p %><%= currentCategory ? '&category=' + encodeURIComponent(currentCategory) : '' %>"><%= p %></a>
+    <% } %>
+</nav>
+<% } %>
+
+<%- include('../partials/site-footer') %>

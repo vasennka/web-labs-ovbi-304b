@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ознакомительно — JSONP</title>
+    <style>
+        :root { color-scheme: dark; }
+        body { font-family: system-ui, Segoe UI, Roboto, sans-serif; max-width: 860px; margin: 24px auto; padding: 0 16px; background: #14161a; color: #e6e6e6; }
+        h1 { font-size: 1.3rem; }
+        .hint { color: #9aa4b2; font-size: .9rem; line-height: 1.6; }
+        .hint code { background: #22262e; padding: 1px 5px; border-radius: 4px; }
+        pre { background: #1a1e25; border: 1px solid #262c36; border-radius: 8px; padding: 12px; overflow: auto; min-height: 60px; }
+        .nav a { color: #7aa7ff; margin-right: 12px; font-size: .9rem; }
+        button { font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid #eab308; background: #eab308; color: #1a1e25; cursor: pointer; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <h1>Ознакомительно: JSONP</h1>
+    <p class="hint">
+        JSONP — исторический способ обойти Same-Origin Policy до появления CORS.
+        Страница создаёт тег <code>&lt;script src="…?callback=handleData"&gt;</code>, а сервер
+        возвращает не JSON, а <b>вызов функции</b>: <code>handleData([…])</code>.
+        Минусы: работает только для GET, исполняет чужой код на странице, нет обработки ошибок.
+        Сегодня вместо JSONP используют CORS (см. <code>Access-Control-Allow-Origin</code> в ответах сервера).
+    </p>
+
+    <p class="nav">
+        <a href="/">React (задание 1)</a>
+        <a href="/ajax.html">AJAX (задание 2)</a>
+        <a href="/poll.html">Comet (задание 3)</a>
+        <a href="/ws.html">WebSocket (задание 3)</a>
+        <a href="/sse.html">SSE</a>
+    </p>
+
+    <button id="load">Загрузить данные через JSONP</button>
+    <pre id="out">Данные ещё не загружены.</pre>
+
+<script>
+'use strict';
+
+/* Шаг 1. Объявляем ГЛОБАЛЬНУЮ функцию, которую вызовет сервер.
+ * Именно её имя передаётся в параметре callback. */
+function handleData(data) {
+    const out = document.getElementById('out');
+    out.textContent = 'Получено через JSONP:\n' + JSON.stringify(data, null, 2);
+}
+
+document.getElementById('load').addEventListener('click', () => {
+    // Шаг 2. Создаём тег <script> — браузер загрузит его как обычный скрипт.
+    const script = document.createElement('script');
+    script.src = '/api/jsonp?callback=handleData&t=' + Date.now(); // t — чтобы не кэшировалось
+    script.onerror = () => {
+        document.getElementById('out').textContent = 'Ошибка загрузки JSONP-скрипта';
+    };
+    document.body.append(script);
+
+    // Шаг 3. Тег можно удалить сразу после выполнения (он одноразовый).
+    script.onload = () => script.remove();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "prisma-studio-project",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Учебный проект (тема 25): сайт фотостудии «PRISMA» — React SPA + Node.js REST API + админка на EJS. Архитектура: чистая (порты и адаптеры) с MVC в слое представления.",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "build": "npm --prefix frontend run build",
+    "start": "npm --prefix backend start",
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm --prefix backend run dev\" \"npm --prefix frontend run dev\"",
+    "seed": "npm --prefix backend run seed",
+    "test:smoke": "npm --prefix backend run smoke"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

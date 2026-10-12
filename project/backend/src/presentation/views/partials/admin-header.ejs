@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> — админка PRISMA</title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+<header class="admin-header">
+    <div class="wrap">
+        <a class="logo" href="/admin">PRISMA · админка</a>
+        <nav>
+            <a href="/admin">Дашборд</a>
+            <a href="/admin/news">Новости</a>
+            <a href="/admin/gallery">Галерея</a>
+            <a href="/admin/messages">Обратная связь</a>
+            <a href="/admin/about">О нас</a>
+            <a href="/" target="_blank" rel="noopener">Сайт ↗</a>
+        </nav>
+        <form method="post" action="/admin/logout" class="inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <span class="who"><%= user ? user.login : '' %></span>
+            <button class="btn small" type="submit">Выйти</button>
+        </form>
+    </div>
+</header>
+<main class="wrap admin">
+    <% if (typeof flash !== 'undefined' && flash) { %>
+        <div class="alert <%= flash.type %>"><%= flash.message %></div>
+    <% } %>

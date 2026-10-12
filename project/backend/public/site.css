@@ -1,0 +1,133 @@
+/* ==========================================================================
+   Стили серверных страниц (шаблонизатор EJS).
+   Оформление намеренно простое: акцент проекта — архитектура и код.
+   ========================================================================== */
+
+:root {
+    color-scheme: dark;
+    --bg: #111319;
+    --panel: #191d25;
+    --panel-2: #1f242e;
+    --border: #2a313d;
+    --text: #e8eaef;
+    --muted: #9aa4b2;
+    --accent: #4d8dff;
+    --ok: #22c55e;
+    --err: #ef4444;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+}
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 18px; }
+a { color: #7aa7ff; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { line-height: 1.25; }
+h1 { font-size: 1.8rem; margin: 18px 0 10px; }
+h2 { font-size: 1.25rem; margin: 26px 0 10px; }
+h4 { margin: 0 0 8px; font-size: .95rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+code { background: #232a35; padding: 1px 6px; border-radius: 5px; font-size: .88em; }
+.muted { color: var(--muted); }
+.small { font-size: .85rem; }
+.tag {
+    display: inline-block; font-size: .74rem; padding: 2px 9px; border-radius: 999px;
+    background: #263041; color: #a9c1e8; margin-right: 6px;
+}
+
+/* ---------------- Шапка / подвал ---------------- */
+.site-header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(17, 19, 25, .92);
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(6px);
+}
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; height: 62px; gap: 20px; }
+.logo { font-weight: 700; font-size: 1.1rem; color: var(--text); letter-spacing: .02em; }
+.logo span { color: var(--accent); }
+.site-header nav { display: flex; gap: 16px; flex-wrap: wrap; font-size: .93rem; }
+.site-header nav a { color: var(--text); opacity: .85; }
+.site-header nav a:hover { opacity: 1; }
+.site-header .spa-link { color: #22c55e; }
+.site-header .admin-link { color: #eab308; }
+
+.site-footer { margin-top: 56px; border-top: 1px solid var(--border); background: #14171e; padding: 26px 0 14px; }
+.footer-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+.footer-nav a { display: block; color: var(--muted); font-size: .92rem; }
+.footer-nav p { margin: 4px 0; color: var(--muted); font-size: .92rem; }
+.copy { color: var(--muted); font-size: .82rem; margin-top: 20px; }
+
+/* ---------------- Секции ---------------- */
+.hero { padding: 40px 0 10px; }
+.hero h1 { font-size: 2.2rem; }
+.lead { color: var(--muted); font-size: 1.05rem; max-width: 70ch; }
+.hero-actions { display: flex; gap: 12px; margin: 20px 0 10px; }
+.note { color: var(--muted); font-size: .88rem; border-left: 3px solid var(--accent); padding-left: 12px; }
+.page-head { padding-top: 26px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 30px; }
+
+.btn {
+    display: inline-block; padding: 9px 16px; border-radius: 9px; border: 1px solid var(--border);
+    background: var(--panel-2); color: var(--text); cursor: pointer; font: inherit; font-size: .93rem;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.small { padding: 5px 11px; font-size: .85rem; }
+.btn:hover { text-decoration: none; filter: brightness(1.06); }
+
+/* ---------------- Сетки и карточки ---------------- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.card {
+    margin: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+}
+.card img { width: 100%; height: 210px; object-fit: cover; display: block; background: #0d0f14; }
+.card figcaption { padding: 12px 14px; }
+.card .meta { color: var(--muted); font-size: .82rem; margin: 6px 0 0; }
+.news-list { display: grid; gap: 14px; }
+.card.news { padding: 16px 18px; }
+.card.news h2, .card.news h3 { margin: 6px 0 8px; }
+.card.news time { color: var(--muted); font-size: .82rem; }
+
+.two-col { display: grid; grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr); gap: 28px; }
+@media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
+
+.widget { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+.widget.degraded { border-color: #5a4a1c; background: #1f1c13; }
+.widget .big { font-size: 1.9rem; margin: 0; }
+.stats { list-style: none; display: flex; gap: 14px; padding: 0; margin: 8px 0; color: var(--muted); }
+.stats span { color: var(--accent); }
+
+.checklist { padding-left: 20px; }
+.checklist li { margin-bottom: 6px; }
+.kv { border-collapse: collapse; width: 100%; }
+.kv th { text-align: left; color: var(--muted); font-weight: 500; padding: 5px 12px 5px 0; white-space: nowrap; }
+.kv td { padding: 5px 0; }
+
+.article { max-width: 74ch; }
+.article .cover { width: 100%; border-radius: 12px; margin: 14px 0; }
+.breadcrumbs { color: var(--muted); font-size: .9rem; }
+
+.filters { margin: 14px 0; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.filters.tags a { padding: 4px 11px; border: 1px solid var(--border); border-radius: 999px; color: var(--text); font-size: .88rem; }
+.filters.tags a.active, .pagination a.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pagination { display: flex; gap: 8px; margin: 22px 0; }
+.pagination a { padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+
+.stack { display: grid; gap: 12px; }
+.stack label { display: grid; gap: 5px; font-size: .93rem; color: var(--muted); }
+input, textarea, select {
+    font: inherit; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--border);
+    background: #14171e; color: var(--text); width: 100%;
+}
+.field-error { color: var(--err); font-size: .84rem; }
+.honeypot { position: absolute; left: -9999px; opacity: 0; }
+.steps { color: var(--muted); font-size: .9rem; padding-left: 20px; }
+
+.alert { padding: 11px 14px; border-radius: 10px; margin: 14px 0; border: 1px solid; }
+.alert.success { background: #10281a; border-color: #1f5f38; color: #b8f0cd; }
+.alert.error { background: #2a1416; border-color: #7a2a2e; color: #f7c1c3; }

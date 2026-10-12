@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3 — Comet (long polling)</title>
+    <style>
+        :root { color-scheme: dark; }
+        body { font-family: system-ui, Segoe UI, Roboto, sans-serif; max-width: 860px; margin: 24px auto; padding: 0 16px; background: #14161a; color: #e6e6e6; }
+        h1 { font-size: 1.35rem; margin-bottom: 4px; }
+        .hint { color: #9aa4b2; font-size: .9rem; margin-bottom: 18px; }
+        .hint code { background: #22262e; padding: 1px 5px; border-radius: 4px; }
+        form { display: flex; gap: 8px; margin-bottom: 16px; }
+        input, button { font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid #333a45; background: #1d2129; color: inherit; }
+        input { flex: 1; }
+        button { background: #2f6feb; border-color: #2f6feb; cursor: pointer; }
+        button:disabled { opacity: .6; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { border: 1px solid #262c36; border-left: 3px solid #22c55e; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; background: #1a1e25; }
+        .meta { color: #8b96a5; font-size: .78rem; }
+        .badge { display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: #262c36; margin-right: 6px; }
+        #status { color: #22c55e; font-size: .85rem; margin: 10px 0; min-height: 1.2em; }
+        #stats { margin-top: 18px; color: #9aa4b2; font-size: .85rem; line-height: 1.7; border-top: 1px solid #262c36; padding-top: 12px; }
+        .nav a { color: #7aa7ff; margin-right: 12px; font-size: .9rem; }
+        .pulse { animation: pulse 1.2s infinite; }
+        @keyframes pulse { 50% { opacity: .45; } }
+    </style>
+</head>
+<body>
+    <h1>Задание 3. Comet: long polling</h1>
+    <p class="hint">
+        Клиент отправляет <code>GET /api/poll</code>, сервер <b>не отвечает</b>, пока не появится
+        новое сообщение. Получив ответ — клиент сразу отправляет новый запрос.
+        Откройте в двух вкладках и убедитесь, что сообщения приходят <b>мгновенно</b>, а в Network
+        нет «пустых» запросов каждые 2 секунды (сравните с <a href="/ajax.html">ajax.html</a>).
+    </p>
+
+    <p class="nav">
+        <a href="/">React (задание 1)</a>
+        <a href="/ajax.html">AJAX (задание 2)</a>
+        <a href="/ws.html">WebSocket (задание 3)</a>
+        <a href="/sse.html">SSE</a>
+        <a href="/api/stats" target="_blank">/api/stats</a>
+    </p>
+
+    <form id="form">
+        <input id="author" value="Гость" size="10" aria-label="Автор">
+        <input id="text" placeholder="Напишите сообщение — оно уйдёт в обе вкладки мгновенно" autocomplete="off" aria-label="Текст">
+        <button type="submit">Отправить</button>
+    </form>
+
+    <div id="status">ожидаю соединение…</div>
+    <ul id="list"></ul>
+    <div id="stats"></div>
+
+<script>
+'use strict';
+
+const listEl = document.getElementById('list');
+const statusEl = document.getElementById('status');
+const statsEl = document.getElementById('stats');
+const formEl = document.getElementById('form');
+const authorEl = document.getElementById('author');
+const textEl = document.getElementById('text');
+
+let pollRequests = 0;      // сколько раз держали соединение
+let received = 0;          // сколько сообщений получено
+let lastId = 0;            // помним последний id, чтобы не потерять сообщения
+let running = true;
+
+/* ---------------------------------------------------------------------------
+ * Long polling: один запрос — одно новое сообщение (или таймаут).
+ * ------------------------------------------------------------------------- */
+async function poll() {
+    if (!running) return;
+
+    pollRequests++;
+    statusEl.textContent = `ожидаю новое сообщение… (соединение #${pollRequests}, получено: ${received})`;
+    statusEl.classList.add('pulse');
+
+    try {
+        const response = await fetch(`/api/poll?lastId=${lastId}`);
+        const data = await response.json();
+        statusEl.classList.remove('pulse');
+
+        const list = data.type === 'messages' ? data.messages : (data.message ? [data.message] : []);
+        for (const message of list) {
+            appendMessage(message);
+            received++;
+            lastId = Math.max(lastId, message.id);
+        }
+        if (data.type === 'timeout') {
+            statusEl.textContent = 'таймаут сервера — переподключаюсь…';
+        }
+    } catch (err) {
+        statusEl.textContent = 'ошибка соединения: ' + err.message + ' — переподключаюсь через 1 с';
+        await new Promise((r) => setTimeout(r, 1000));
+    }
+
+    // ВАЖНО: сразу же запрашиваем следующее сообщение — это и есть Comet
+    poll();
+}
+
+function appendMessage(message) {
+    const li = document.createElement('li');
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = '#' + message.id;
+
+    const strong = document.createElement('strong');
+    strong.textContent = message.author;
+
+    const time = document.createElement('span');
+    time.className = 'meta';
+    time.textContent = ' · ' + new Date(message.at).toLocaleTimeString();
+
+    const p = document.createElement('div');
+    p.textContent = message.text;   // защита от XSS: вставляем текст, а не HTML
+
+    li.append(badge, strong, time, p);
+    listEl.prepend(li);
+
+    statsEl.textContent =
+        `long polling-запросов: ${pollRequests} · получено сообщений: ${received}. ` +
+        `Обратите внимание: пока новостей нет, сервер держит ОДИН открытый запрос — ` +
+        `никаких «пустых» опросов каждые 2 секунды.`;
+}
+
+/* ---------------------------------------------------------------------------
+ * Отправка сообщения — обычный POST. Сервер сам разошлёт его всем ожидающим.
+ * ------------------------------------------------------------------------- */
+formEl.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const text = textEl.value.trim();
+    if (!text) return;
+
+    await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ author: authorEl.value.trim() || 'Гость', text })
+    });
+    textEl.value = '';
+    textEl.focus();
+});
+
+// Начальная загрузка истории + запуск цикла long polling
+(async () => {
+    const response = await fetch('/api/messages');
+    const data = await response.json();
+    for (const message of data.messages) {
+        appendMessage(message);
+        lastId = Math.max(lastId, message.id);
+    }
+    received = data.messages.length;
+    poll();
+})();
+
+window.addEventListener('beforeunload', () => { running = false; });
+</script>
+</body>
+</html>

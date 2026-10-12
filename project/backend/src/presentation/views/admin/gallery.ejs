@@ -1,0 +1,83 @@
+<%- include('../partials/admin-header') %>
+
+<h1>Галерея</h1>
+<p class="muted">Загрузите файл (PNG/JPEG/WebP/GIF/SVG, до 4 МБ) или укажите ссылку на изображение.
+    Загруженный файл сохраняется со случайным именем — исходное имя пользователя на диск не попадает.</p>
+
+<% if (uploaded) { %><div class="alert success">Фотография добавлена в галерею.</div><% } %>
+<% if (error) { %><div class="alert error"><%= error %></div><% } %>
+
+<form method="post" action="/admin/gallery" enctype="multipart/form-data" class="stack form-card">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="row">
+        <label>
+            Название *
+            <input type="text" name="title" required minlength="2" maxlength="150">
+        </label>
+        <label>
+            Категория
+            <select name="category">
+                <% categories.forEach(function (category) { %>
+                    <option value="<%= category %>"><%= category %></option>
+                <% }); %>
+            </select>
+        </label>
+        <label>
+            Фотосъёмка (дата)
+            <input type="date" name="shotAt">
+        </label>
+    </div>
+
+    <label>
+        Описание
+        <textarea name="description" rows="2" maxlength="500"></textarea>
+    </label>
+
+    <div class="row">
+        <label>
+            Автор
+            <input type="text" name="author" value="Фотостудия PRISMA">
+        </label>
+        <label>
+            Загрузить файл
+            <input type="file" name="image" accept="image/*">
+        </label>
+        <label>
+            …или ссылка на изображение
+            <input type="text" name="imageUrl" placeholder="https://picsum.photos/seed/x/1200/800">
+        </label>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn primary" type="submit">Добавить в галерею</button>
+    </div>
+</form>
+
+<h2>Работ в галерее: <%= total %></h2>
+<div class="grid gallery-admin">
+    <% items.forEach(function (photo) { %>
+        <figure class="card">
+            <img src="<%= photo.imageUrl %>" alt="<%= photo.title %>" loading="lazy">
+            <figcaption>
+                <b><%= photo.title %></b>
+                <p class="meta"><span class="tag"><%= photo.category %></span> <%= photo.shotAt %></p>
+                <form method="post" action="/admin/gallery/<%= photo.id %>/delete" class="inline"
+                      onsubmit="return confirm('Удалить фотографию?')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="link danger" type="submit">удалить</button>
+                </form>
+            </figcaption>
+        </figure>
+    <% }); %>
+</div>
+
+<% if (pages > 1) { %>
+<nav class="pagination">
+    <% for (let p = 1; p <= pages; p++) { %>
+        <a class="<%= p === page ? 'active' : '' %>" href="/admin/gallery?page=<%= p %>"><%= p %></a>
+    <% } %>
+</nav>
+<% } %>
+
+<%- include('../partials/admin-footer') %>

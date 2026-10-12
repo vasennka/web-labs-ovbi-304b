@@ -1,0 +1,195 @@
+﻿
+### 1. ╨ÿ╨¥╨ÿ╨ª╨ÿ╨É╨¢╨ÿ╨ù╨É╨ª╨ÿ╨» ╨á╨ò╨ƒ╨₧╨ù╨ÿ╨ó╨₧╨á╨ÿ╨» (╨▓ ╤Ç╨╡╨░╨╗╤î╨╜╨╛╤ü╤é╨╕: git clone <url>)
+PS> git init -q .
+
+PS> git config user.name "Makar"
+
+PS> git config user.email "makar@example.com"
+
+PS> git config core.autocrlf false
+
+PS> git add README.md
+
+PS> git commit -m "chore: init repository"
+[master (root-commit) 8b6a491] chore: init repository
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md
+
+### 2. ╨ó╨ÿ╨£╨¢╨ÿ╨ö ╨í╨₧╨ù╨ö╨É╨ü╨ó ╨Æ╨ò╨ó╨Ü╨ú main (╤ü╤é╨░╨▒╨╕╨╗╤î╨╜╨░╤Å) ╨ÿ develop (╤Ç╨░╨╖╤Ç╨░╨▒╨╛╤é╨║╨░)
+PS> git branch -M main
+
+PS> git switch -c develop
+Switched to a new branch 'develop'
+
+### 3. ╨Ü╨É╨û╨ö╨½╨Ö ╨ú╨º╨É╨í╨ó╨¥╨ÿ╨Ü ╨í╨₧╨ù╨ö╨É╨ü╨ó ╨¢╨ÿ╨º╨¥╨ú╨« ╨Æ╨ò╨ó╨Ü╨ú feature/<╨╕╨╝╤Å> ╨₧╨ó develop
+PS> git switch -c feature/denis develop
+Switched to a new branch 'feature/denis'
+
+### 4. ╨ƒ╨á╨₧╨ô╨á╨É╨£╨£╨ÿ╨í╨ó 1 (╨ö╨ò╨¥╨ÿ╨í): calculateAverage(data)
+PS> git add modules/average.js
+
+PS> git commit -m "feat(average): calculateAverage - ╤ü╤Ç╨╡╨┤╨╜╨╕╨╣ ╨▒╨░╨╗╨╗ ╨│╤Ç╤â╨┐╨┐╤ï"
+[feature/denis 2a9a7c6] feat(average): calculateAverage - ╤ü╤Ç╨╡╨┤╨╜╨╕╨╣ ╨▒╨░╨╗╨╗ ╨│╤Ç╤â╨┐╨┐╤ï
+ 1 file changed, 2 insertions(+)
+ create mode 100644 modules/average.js
+PS> git switch develop
+Switched to branch 'develop'
+
+### 5. ╨ó╨ÿ╨£╨¢╨ÿ╨ö ╨ƒ╨á╨ÿ╨¥╨ÿ╨£╨É╨ò╨ó PR #1: ╤Ç╨╡╨▓╤î╤Ä + merge --no-ff
+PS> git merge --no-ff feature/denis -m "Merge PR #1: feature/denis -> develop"
+Merge made by the 'ort' strategy.
+ modules/average.js | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 modules/average.js
+
+### 6. ╨ƒ╨á╨₧╨ô╨á╨É╨£╨£╨ÿ╨í╨ó 3 (╨É╨¥╨¥╨É): filterFailed(data, passScore)
+PS> git switch -c feature/anna develop
+Switched to a new branch 'feature/anna'
+PS> git add modules/failed.js
+
+PS> git commit -m "feat(failed): filterFailed - ╤ü╨┐╨╕╤ü╨╛╨║ ╨┤╨╛╨╗╨╢╨╜╨╕╨║╨╛╨▓"
+[feature/anna 07fd7eb] feat(failed): filterFailed - ╤ü╨┐╨╕╤ü╨╛╨║ ╨┤╨╛╨╗╨╢╨╜╨╕╨║╨╛╨▓
+ 1 file changed, 2 insertions(+)
+ create mode 100644 modules/failed.js
+PS> git switch develop
+Switched to branch 'develop'
+PS> git merge --no-ff feature/anna -m "Merge PR #2: feature/anna -> develop"
+Merge made by the 'ort' strategy.
+ modules/failed.js | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 modules/failed.js
+
+### 7. ╨ƒ╨á╨₧╨ô╨á╨É╨£╨£╨ÿ╨í╨ó 4 (╨ö╨É╨¿╨É): addLetterGrade(data)
+PS> git switch -c feature/dasha develop
+Switched to a new branch 'feature/dasha'
+PS> git add modules/letter.js
+
+PS> git commit -m "feat(letter): addLetterGrade - ╨▒╤â╨║╨▓╨╡╨╜╨╜╤ï╨╡ ╨╛╤å╨╡╨╜╨║╨╕"
+[feature/dasha f27a419] feat(letter): addLetterGrade - ╨▒╤â╨║╨▓╨╡╨╜╨╜╤ï╨╡ ╨╛╤å╨╡╨╜╨║╨╕
+ 1 file changed, 2 insertions(+)
+ create mode 100644 modules/letter.js
+PS> git switch develop
+Switched to branch 'develop'
+PS> git merge --no-ff feature/dasha -m "Merge PR #3: feature/dasha -> develop"
+Merge made by the 'ort' strategy.
+ modules/letter.js | 2 ++
+ 1 file changed, 2 insertions(+)
+ create mode 100644 modules/letter.js
+
+### 8. ╨ñ╨ÿ╨¥╨É╨¢╨¼╨¥╨½╨Ö ╨á╨ò╨¢╨ÿ╨ù: develop -> main (╨┤╨╡╨╗╨░╨╡╤é ╤é╨╕╨╝╨╗╨╕╨┤)
+PS> git switch main
+Switched to branch 'main'
+PS> git merge --no-ff develop -m "Release v1.0: ╨░╨╜╨░╨╗╨╕╨╖ ╤â╤ü╨┐╨╡╨▓╨░╨╡╨╝╨╛╤ü╤é╨╕ (develop -> main)"
+Merge made by the 'ort' strategy.
+ modules/average.js | 2 ++
+ modules/failed.js  | 2 ++
+ modules/letter.js  | 2 ++
+ 3 files changed, 6 insertions(+)
+ create mode 100644 modules/average.js
+ create mode 100644 modules/failed.js
+ create mode 100644 modules/letter.js
+
+### 9. ╨ÿ╨í╨ó╨₧╨á╨ÿ╨» ╨á╨ò╨ƒ╨₧╨ù╨ÿ╨ó╨₧╨á╨ÿ╨»: git log --oneline --graph --all --decorate
+PS> git log --oneline --graph --all --decorate
+*   847e3ca (HEAD -> main) Release v1.0: ╨░╨╜╨░╨╗╨╕╨╖ ╤â╤ü╨┐╨╡╨▓╨░╨╡╨╝╨╛╤ü╤é╨╕ (develop -> main)
+|\  
+| *   69a6cd3 (develop) Merge PR #3: feature/dasha -> develop
+| |\  
+| | * f27a419 (feature/dasha) feat(letter): addLetterGrade - ╨▒╤â╨║╨▓╨╡╨╜╨╜╤ï╨╡ ╨╛╤å╨╡╨╜╨║╨╕
+| |/  
+| *   11dbeb6 Merge PR #2: feature/anna -> develop
+| |\  
+| | * 07fd7eb (feature/anna) feat(failed): filterFailed - ╤ü╨┐╨╕╤ü╨╛╨║ ╨┤╨╛╨╗╨╢╨╜╨╕╨║╨╛╨▓
+| |/  
+| * 5910232 Merge PR #1: feature/denis -> develop
+|/| 
+| * 2a9a7c6 (feature/denis) feat(average): calculateAverage - ╤ü╤Ç╨╡╨┤╨╜╨╕╨╣ ╨▒╨░╨╗╨╗ ╨│╤Ç╤â╨┐╨┐╤ï
+|/  
+* 8b6a491 chore: init repository
+
+### 10. ╨í╨ƒ╨ÿ╨í╨₧╨Ü ╨Æ╨ò╨ó╨₧╨Ü: git branch -a
+PS> git branch -a
+  develop
+  feature/anna
+  feature/dasha
+  feature/denis
+* main
+
+### 11. ╨ö╨ò╨£╨₧╨¥╨í╨ó╨á╨É╨ª╨ÿ╨» ╨Ü╨₧╨¥╨ñ╨¢╨ÿ╨Ü╨ó╨É ╨í╨¢╨ÿ╨»╨¥╨ÿ╨»
+--- ╨▓╨╡╤é╨║╨░ A ╨┐╤Ç╨░╨▓╨╕╤é ╤ü╤é╤Ç╨╛╨║╤â ╨╕ ╨┐╨╛╨┐╨░╨┤╨░╨╡╤é ╨▓ develop
+PS> git switch -c feature/conflict-a develop
+Switched to a new branch 'feature/conflict-a'
+PS> git add modules/notes.txt
+
+PS> git commit -m "docs(a): ╨▓╨░╤Ç╨╕╨░╨╜╤é ╤ç╨╡╤Ç╨╡╨╖ reduce"
+[feature/conflict-a f97d0d7] docs(a): ╨▓╨░╤Ç╨╕╨░╨╜╤é ╤ç╨╡╤Ç╨╡╨╖ reduce
+ 1 file changed, 1 insertion(+)
+ create mode 100644 modules/notes.txt
+PS> git switch develop
+Switched to branch 'develop'
+PS> git merge --no-ff feature/conflict-a -m "Merge PR #4: feature/conflict-a"
+Merge made by the 'ort' strategy.
+ modules/notes.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 modules/notes.txt
+--- ╨▓╨╡╤é╨║╨░ B ╤ü╤é╨░╤Ç╤é╤â╨╡╤é ╨╛╤é develop ╨╕ ╨┐╤Ç╨░╨▓╨╕╤é ╨ó╨ú ╨û╨ò ╤ü╤é╤Ç╨╛╨║╤â
+PS> git switch -c feature/conflict-b develop
+Switched to a new branch 'feature/conflict-b'
+PS> git add modules/notes.txt
+
+PS> git commit -m "docs(b): ╨▓╨░╤Ç╨╕╨░╨╜╤é ╤ç╨╡╤Ç╨╡╨╖ for"
+[feature/conflict-b a6dd2a8] docs(b): ╨▓╨░╤Ç╨╕╨░╨╜╤é ╤ç╨╡╤Ç╨╡╨╖ for
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- ╨┐╨╛╨║╨░ B ╨╢╨┤╤æ╤é ╤Ç╨╡╨▓╤î╤Ä, develop ╤é╨╛╨╢╨╡ ╨╝╨╡╨╜╤Å╨╡╤é ╤ì╤é╤â ╤ü╤é╤Ç╨╛╨║╤â
+PS> git switch develop
+Switched to branch 'develop'
+PS> git add modules/notes.txt
+
+PS> git commit -m "docs(develop): ╤â╤é╨╛╤ç╨╜╨╡╨╜╨╕╨╡ ╤ä╨╛╤Ç╨╝╤â╨╗╨╕╤Ç╨╛╨▓╨║╨╕"
+[develop b5e9472] docs(develop): ╤â╤é╨╛╤ç╨╜╨╡╨╜╨╕╨╡ ╤ä╨╛╤Ç╨╝╤â╨╗╨╕╤Ç╨╛╨▓╨║╨╕
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- merge ╨┤╨░╤æ╤é CONFLICT: git ╨╜╨╡ ╨╖╨╜╨░╨╡╤é, ╨║╨░╨║╤â╤Ä ╨▓╨╡╤Ç╤ü╨╕╤Ä ╨╛╤ü╤é╨░╨▓╨╕╤é╤î
+PS> git merge feature/conflict-b -m "Merge PR #5: feature/conflict-b"
+Auto-merging modules/notes.txt
+CONFLICT (content): Merge conflict in modules/notes.txt
+Automatic merge failed; fix conflicts and then commit the result.
+--- ╤ü╨╛╨┤╨╡╤Ç╨╢╨╕╨╝╨╛╨╡ ╨║╨╛╨╜╤ä╨╗╨╕╨║╤é╨╜╨╛╨│╨╛ ╤ä╨░╨╣╨╗╨░: ╨╝╨░╤Ç╨║╨╡╤Ç╤ï <<<<<<< ======= >>>>>>>
+    <<<<<<< HEAD
+    ╤ü╤Ç╨╡╨┤╨╜╨╕╨╣ ╨▒╨░╨╗╨╗ ╤ü╤ç╨╕╤é╨░╨╡╨╝ ╤ç╨╡╤Ç╨╡╨╖ ╤å╨╕╨║╨╗
+    =======
+    ╤ü╤Ç╨╡╨┤╨╜╨╕╨╣ ╨▒╨░╨╗╨╗ ╤ü╤ç╨╕╤é╨░╨╡╨╝ ╤ç╨╡╤Ç╨╡╨╖ for
+    >>>>>>> feature/conflict-b
+--- ╤ü╤é╨░╤é╤â╤ü: UU = "both modified" (╨║╨╛╨╜╤ä╨╗╨╕╨║╤é ╨╜╨╡ ╤Ç╨░╨╖╤Ç╨╡╤ê╤æ╨╜)
+PS> git status --short
+UU modules/notes.txt
+--- ╨á╨É╨ù╨á╨ò╨¿╨ò╨¥╨ÿ╨ò: ╨╛╤ü╤é╨░╨▓╨╗╤Å╨╡╨╝ ╨╛╨▒╤è╨╡╨┤╨╕╨╜╤æ╨╜╨╜╤ï╨╣ ╨▓╨░╤Ç╨╕╨░╨╜╤é
+PS> git add modules/notes.txt
+
+PS> git commit -m "fix: ╨║╨╛╨╜╤ä╨╗╨╕╨║╤é PR #5 ╤Ç╨░╨╖╤Ç╨╡╤ê╤æ╨╜ ╨▓╤Ç╤â╤ç╨╜╤â╤Ä"
+[develop 27c7755] fix: ╨║╨╛╨╜╤ä╨╗╨╕╨║╤é PR #5 ╤Ç╨░╨╖╤Ç╨╡╤ê╤æ╨╜ ╨▓╤Ç╤â╤ç╨╜╤â╤Ä
+PS> git status --short
+
+
+### 12. ╨ÿ╨ó╨₧╨ô╨₧╨Æ╨É╨» ╨ÿ╨í╨ó╨₧╨á╨ÿ╨» (╨┐╨╛╤ü╨╗╨╡╨┤╨╜╨╕╨╡ 6 ╨║╨╛╨╝╨╝╨╕╤é╨╛╨▓)
+PS> git log --oneline --graph -6
+*   27c7755 fix: ╨║╨╛╨╜╤ä╨╗╨╕╨║╤é PR #5 ╤Ç╨░╨╖╤Ç╨╡╤ê╤æ╨╜ ╨▓╤Ç╤â╤ç╨╜╤â╤Ä
+|\  
+| * a6dd2a8 docs(b): ╨▓╨░╤Ç╨╕╨░╨╜╤é ╤ç╨╡╤Ç╨╡╨╖ for
+* | b5e9472 docs(develop): ╤â╤é╨╛╤ç╨╜╨╡╨╜╨╕╨╡ ╤ä╨╛╤Ç╨╝╤â╨╗╨╕╤Ç╨╛╨▓╨║╨╕
+|/  
+*   fe42003 Merge PR #4: feature/conflict-a
+|\  
+| * f97d0d7 docs(a): ╨▓╨░╤Ç╨╕╨░╨╜╤é ╤ç╨╡╤Ç╨╡╨╖ reduce
+|/  
+*   69a6cd3 Merge PR #3: feature/dasha -> develop
+|\
+
+### 13. ╨Æ╨í╨ò ╨Æ╨ò╨ó╨Ü╨ÿ ╨ƒ╨₧╨í╨¢╨ò ╨á╨É╨æ╨₧╨ó╨½
+PS> git branch -a
+* develop
+  feature/anna
+  feature/conflict-a
+  feature/conflict-b
+  feature/dasha
+  feature/denis
+  main

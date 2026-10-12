@@ -1,0 +1,80 @@
+<%- include('../partials/site-header') %>
+
+<section class="page-head">
+    <h1><%= about.title %></h1>
+    <p class="lead">Раздел «О себе / О компании». Данные берутся из базы и правятся в админке.</p>
+</section>
+
+<div class="two-col">
+    <section>
+        <h2>О студии</h2>
+        <% about.text.split('\n').forEach(function (paragraph) { %>
+            <p><%= paragraph %></p>
+        <% }); %>
+
+        <h2>Наши принципы</h2>
+        <ul class="checklist">
+            <% (about.values || []).forEach(function (value) { %>
+                <li><%= value %></li>
+            <% }); %>
+        </ul>
+
+        <h2>Контакты</h2>
+        <table class="kv">
+            <tr><th>Телефон</th><td><%= about.phone %></td></tr>
+            <tr><th>E-mail</th><td><%= about.email %></td></tr>
+            <tr><th>Адрес</th><td><%= about.address %></td></tr>
+            <tr><th>Часы работы</th><td><%= about.workHours %></td></tr>
+        </table>
+    </section>
+
+    <aside>
+        <!-- ================= ИНТЕГРАЦИИ СО СТОРОННИМИ СЕРВИСАМИ ================= -->
+        <h2>Интеграция №1: GitHub (официальный SDK)</h2>
+        <% if (integrations.github && integrations.github.fullName) { %>
+            <div class="widget <%= integrations.github.degraded ? 'degraded' : '' %>">
+                <p><b><%= integrations.github.fullName %></b></p>
+                <p class="muted"><%= integrations.github.description || '' %></p>
+                <ul class="stats">
+                    <li><span>★</span> <%= integrations.github.stars %></li>
+                    <li><span>⑂</span> <%= integrations.github.forks %></li>
+                    <li><span>!</span> <%= integrations.github.openIssues %></li>
+                </ul>
+                <p class="muted">
+                    Последний push: <%= new Date(integrations.github.lastPush).toLocaleString('ru-RU') %><br>
+                    Источник: <%= integrations.github.provider %><br>
+                    <% if (integrations.github.fromCache) { %>из кэша <% } %>
+                    <% if (integrations.github.stale) { %> (данные устарели — сервис недоступен) <% } %>
+                </p>
+                <p><a href="<%= integrations.github.url %>" target="_blank" rel="noopener">открыть репозиторий →</a></p>
+            </div>
+        <% } else { %>
+            <div class="widget degraded">
+                <p>GitHub недоступен, показываем заглушку.</p>
+                <p class="muted"><%= integrations.github.message || 'нет соединения' %></p>
+            </div>
+        <% } %>
+
+        <h2>Интеграция №2: погода (клиент поверх fetch)</h2>
+        <% if (integrations.weather && integrations.weather.temperature !== null) { %>
+            <div class="widget">
+                <p class="big"><%= integrations.weather.temperature %>°C</p>
+                <p><%= integrations.weather.description %>, <%= integrations.weather.city %></p>
+                <p class="muted">
+                    Ветер: <%= integrations.weather.windSpeed %> м/с<br>
+                    Источник: <%= integrations.weather.provider %><br>
+                    <% if (integrations.weather.fromCache) { %>из кэша (10 минут) <% } %>
+                </p>
+            </div>
+        <% } else { %>
+            <div class="widget degraded">
+                <p>Open-Meteo недоступен, показываем заглушку.</p>
+                <p class="muted"><%= integrations.weather.message || 'нет соединения' %></p>
+            </div>
+        <% } %>
+
+        <p class="muted small">Данные получены: <%= new Date(integrations.fetchedAt).toLocaleString('ru-RU') %></p>
+    </aside>
+</div>
+
+<%- include('../partials/site-footer') %>

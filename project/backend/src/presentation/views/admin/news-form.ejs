@@ -1,0 +1,56 @@
+<%- include('../partials/admin-header') %>
+
+<h1><%= title %></h1>
+<p class="muted">Заголовок, анонс и текст обязательны. Slug (адрес страницы) формируется автоматически из заголовка.</p>
+
+<form method="post" action="<%= news && news.id ? '/admin/news/' + news.id : '/admin/news' %>" class="stack form-card">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <label>
+        Заголовок *
+        <input type="text" name="title" value="<%= values.title || '' %>" required minlength="3" maxlength="200">
+        <% if (errors.title) { %><span class="field-error"><%= errors.title %></span><% } %>
+    </label>
+
+    <label>
+        Анонс (для списка и карточек)
+        <textarea name="excerpt" rows="2" maxlength="400"><%= values.excerpt || '' %></textarea>
+        <% if (errors.excerpt) { %><span class="field-error"><%= errors.excerpt %></span><% } %>
+    </label>
+
+    <label>
+        Текст новости *
+        <textarea name="content" rows="12" required minlength="10"><%= values.content || '' %></textarea>
+        <% if (errors.content) { %><span class="field-error"><%= errors.content %></span><% } %>
+    </label>
+
+    <label>
+        Теги (через запятую)
+        <input type="text" name="tags"
+               value="<%= Array.isArray(values.tags) ? values.tags.join(', ') : (values.tags || '') %>"
+               placeholder="репортаж, полезное">
+        <% if (errors.tags) { %><span class="field-error"><%= errors.tags %></span><% } %>
+    </label>
+
+    <label>
+        Обложка (необязательно): ссылка http(s):// или путь /uploads/...
+        <input type="text" name="coverUrl" value="<%= values.coverUrl || '' %>" placeholder="https://...">
+        <% if (errors.coverUrl) { %><span class="field-error"><%= errors.coverUrl %></span><% } %>
+    </label>
+
+    <label>
+        Дата публикации (необязательно)
+        <input type="datetime-local" name="publishedAt"
+               value="<%= values.publishedAt ? new Date(values.publishedAt).toISOString().slice(0, 16) : '' %>">
+        <% if (errors.publishedAt) { %><span class="field-error"><%= errors.publishedAt %></span><% } %>
+    </label>
+
+    <% if (errors.form) { %><div class="alert error"><%= errors.form %></div><% } %>
+
+    <div class="form-actions">
+        <button class="btn primary" type="submit">Сохранить</button>
+        <a class="btn" href="/admin/news">Отмена</a>
+    </div>
+</form>
+
+<%- include('../partials/admin-footer') %>

@@ -1,0 +1,48 @@
+<%- include('../partials/admin-header') %>
+
+<div class="section-head">
+    <h1>Новости</h1>
+    <a class="btn primary" href="/admin/news/new">+ новая новость</a>
+</div>
+
+<table class="table">
+    <thead>
+    <tr><th>#</th><th>Заголовок</th><th>Slug</th><th>Теги</th><th>Публикация</th><th>Действия</th></tr>
+    </thead>
+    <tbody>
+    <% items.forEach(function (item) { %>
+        <tr>
+            <td><%= item.id %></td>
+            <td>
+                <%= item.title %>
+                <div class="muted small"><%= item.excerpt %></div>
+            </td>
+            <td><code><%= item.slug %></code></td>
+            <td><% (item.tags || []).forEach(function (t) { %><span class="tag"><%= t %></span><% }); %></td>
+            <td><%= new Date(item.publishedAt).toLocaleDateString('ru-RU') %></td>
+            <td class="actions">
+                <a href="/admin/news/<%= item.id %>/edit">править</a>
+                <a href="/site/news/<%= item.slug %>" target="_blank" rel="noopener">смотреть</a>
+                <form method="post" action="/admin/news/<%= item.id %>/delete" class="inline"
+                      onsubmit="return confirm('Удалить новость «<%= item.title.replace(/'/g, "") %>»?')">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button class="link danger" type="submit">удалить</button>
+                </form>
+            </td>
+        </tr>
+    <% }); %>
+    <% if (items.length === 0) { %>
+        <tr><td colspan="6" class="muted">Новостей пока нет. Создайте первую.</td></tr>
+    <% } %>
+    </tbody>
+</table>
+
+<% if (pages > 1) { %>
+<nav class="pagination">
+    <% for (let p = 1; p <= pages; p++) { %>
+        <a class="<%= p === page ? 'active' : '' %>" href="/admin/news?page=<%= p %>"><%= p %></a>
+    <% } %>
+</nav>
+<% } %>
+
+<%- include('../partials/admin-footer') %>

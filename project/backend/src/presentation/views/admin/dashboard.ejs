@@ -1,0 +1,56 @@
+<%- include('../partials/admin-header') %>
+
+<h1>Дашборд</h1>
+<p class="muted">Раздел «<%= aboutTitle %>». Данные ниже — живые показатели приложения.</p>
+
+<div class="stats-grid">
+    <div class="stat"><span class="num"><%= stats.news %></span><span>новостей</span></div>
+    <div class="stat"><span class="num"><%= stats.gallery %></span><span>фотографий</span></div>
+    <div class="stat <%= stats.unread > 0 ? 'accent' : '' %>"><span class="num"><%= stats.unread %></span><span>непрочитанных сообщений</span></div>
+    <div class="stat"><span class="num"><%= stats.emails %></span><span>писем «отправлено»</span></div>
+</div>
+
+<div class="two-col">
+    <section>
+        <h2>Последние новости</h2>
+        <table class="table">
+            <thead><tr><th>#</th><th>Заголовок</th><th>Дата</th><th></th></tr></thead>
+            <tbody>
+            <% latestNews.forEach(function (item) { %>
+                <tr>
+                    <td><%= item.id %></td>
+                    <td><%= item.title %></td>
+                    <td><%= new Date(item.publishedAt).toLocaleDateString('ru-RU') %></td>
+                    <td><a href="/admin/news/<%= item.id %>/edit">править</a></td>
+                </tr>
+            <% }); %>
+            </tbody>
+        </table>
+        <p><a class="btn primary" href="/admin/news/new">+ новая новость</a></p>
+    </section>
+
+    <aside>
+        <h2>Письма-уведомления</h2>
+        <% if (letters.length === 0) { %>
+            <p class="muted">Пока ни одного письма. Отправьте сообщение через форму обратной связи.</p>
+        <% } else { %>
+            <% letters.forEach(function (letter) { %>
+                <div class="letter">
+                    <p><b><%= letter.subject %></b></p>
+                    <p class="muted small">Кому: <%= letter.to %> · <%= new Date(letter.sentAt).toLocaleString('ru-RU') %></p>
+                </div>
+            <% }); %>
+        <% } %>
+
+        <h2>Смена пароля</h2>
+        <form method="post" action="/admin/password" class="stack">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <label>Текущий пароль<input type="password" name="currentPassword" required></label>
+            <label>Новый пароль (минимум 6 символов)<input type="password" name="newPassword" required minlength="6"></label>
+            <label>Повторите новый пароль<input type="password" name="confirmPassword" required minlength="6"></label>
+            <button class="btn" type="submit">Сменить пароль</button>
+        </form>
+    </aside>
+</div>
+
+<%- include('../partials/admin-footer') %>

@@ -1,0 +1,83 @@
+<%- include('../partials/admin-header') %>
+
+<h1>Раздел «О нас»</h1>
+<p class="muted">Эти данные показываются на публичных страницах (<a href="/site/about" target="_blank" rel="noopener">/site/about</a>
+    и в React-версии через <code>GET /api/v1/about</code>).</p>
+
+<div class="two-col">
+    <section>
+        <form method="post" action="/admin/about" class="stack form-card">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <label>
+                Заголовок раздела *
+                <input type="text" name="title" value="<%= about.title || '' %>" required>
+                <% if (errors.title) { %><span class="field-error"><%= errors.title %></span><% } %>
+            </label>
+
+            <label>
+                Текст о студии * (абзацы — с новой строки)
+                <textarea name="text" rows="12" required><%= about.text || '' %></textarea>
+                <% if (errors.text) { %><span class="field-error"><%= errors.text %></span><% } %>
+            </label>
+
+            <label>
+                Принципы работы (по одному на строку)
+                <textarea name="values" rows="6"><%= (about.values || []).join('\n') %></textarea>
+            </label>
+
+            <div class="row">
+                <label>Телефон<input type="text" name="phone" value="<%= about.phone || '' %>"></label>
+                <label>E-mail<input type="text" name="email" value="<%= about.email || '' %>"></label>
+            </div>
+            <div class="row">
+                <label>Адрес<input type="text" name="address" value="<%= about.address || '' %>"></label>
+                <label>Часы работы<input type="text" name="workHours" value="<%= about.workHours || '' %>"></label>
+            </div>
+
+            <% if (errors.form) { %><div class="alert error"><%= errors.form %></div><% } %>
+
+            <div class="form-actions">
+                <button class="btn primary" type="submit">Сохранить</button>
+            </div>
+        </form>
+    </section>
+
+    <aside>
+        <h2>Интеграции (проверка прямо из админки)</h2>
+
+        <div class="widget">
+            <p><b>GitHub</b> — официальный SDK <code>@octokit/rest</code></p>
+            <% if (integrations.github && integrations.github.fullName) { %>
+                <p><%= integrations.github.fullName %> · ★ <%= integrations.github.stars %> ·
+                    ⑂ <%= integrations.github.forks %></p>
+                <p class="muted small">
+                    <%= integrations.github.fromCache ? 'из кэша' : 'получено только что' %>
+                    <% if (integrations.github.stale) { %>· данные устарели<% } %>
+                </p>
+            <% } else { %>
+                <p class="muted small">недоступно: <%= (integrations.github && integrations.github.message) || 'нет данных' %></p>
+            <% } %>
+        </div>
+
+        <div class="widget">
+            <p><b>Погода</b> — клиент поверх <code>fetch</code> (Open-Meteo)</p>
+            <% if (integrations.weather && integrations.weather.temperature !== null) { %>
+                <p><%= integrations.weather.temperature %> °C, <%= integrations.weather.description %></p>
+                <p class="muted small"><%= integrations.weather.fromCache ? 'из кэша' : 'получено только что' %></p>
+            <% } else { %>
+                <p class="muted small">недоступно: <%= (integrations.weather && integrations.weather.message) || 'нет данных' %></p>
+            <% } %>
+        </div>
+
+        <h2>Значения по умолчанию</h2>
+        <p class="muted small">Если очистить поля, сервис вернёт значения по умолчанию:</p>
+        <ul class="small">
+            <li><%= defaultAbout.title %></li>
+            <li><%= defaultAbout.phone %></li>
+            <li><%= defaultAbout.email %></li>
+        </ul>
+    </aside>
+</div>
+
+<%- include('../partials/admin-footer') %>

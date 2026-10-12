@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Стили админки (EJS). Отдельный файл — админка не должна зависеть от SPA.
+   ========================================================================== */
+
+:root {
+    color-scheme: dark;
+    --bg: #0f1218;
+    --panel: #171b23;
+    --border: #262d38;
+    --text: #e7eaf0;
+    --muted: #98a2b3;
+    --accent: #4d8dff;
+    --ok: #22c55e;
+    --err: #ef4444;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, 'Segoe UI', Roboto, sans-serif; line-height: 1.55; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 18px; }
+a { color: #7aa7ff; text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1 { font-size: 1.55rem; margin: 18px 0 8px; }
+h2 { font-size: 1.12rem; margin: 22px 0 10px; }
+code { background: #212833; padding: 1px 6px; border-radius: 5px; font-size: .87em; }
+.muted { color: var(--muted); }
+.small { font-size: .84rem; }
+.tag { display: inline-block; font-size: .73rem; padding: 2px 8px; border-radius: 999px; background: #263041; color: #a9c1e8; margin-right: 5px; }
+
+.admin-header { border-bottom: 1px solid var(--border); background: #12161d; position: sticky; top: 0; z-index: 20; }
+.admin-header .wrap { display: flex; align-items: center; gap: 18px; height: 60px; flex-wrap: wrap; }
+.admin-header .logo { font-weight: 700; color: var(--text); white-space: nowrap; }
+.admin-header nav { display: flex; gap: 14px; flex-wrap: wrap; font-size: .92rem; }
+.admin-header nav a { color: var(--text); opacity: .85; }
+.admin-header .inline { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.who { color: var(--muted); font-size: .88rem; }
+.admin { padding-bottom: 40px; min-height: 60vh; }
+.admin-footer { border-top: 1px solid var(--border); color: var(--muted); font-size: .82rem; padding: 16px 0; margin-top: 40px; }
+
+.btn { display: inline-block; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: #1c222c; color: var(--text); cursor: pointer; font: inherit; font-size: .92rem; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.small { padding: 4px 10px; font-size: .84rem; }
+.link { background: none; border: none; color: #7aa7ff; cursor: pointer; font: inherit; padding: 0; }
+.link.danger { color: #ff8b8b; }
+.inline { display: inline; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 18px 0; }
+.stat { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: grid; gap: 4px; }
+.stat .num { font-size: 1.9rem; font-weight: 700; }
+.stat span:last-child { color: var(--muted); font-size: .86rem; }
+.stat.accent { border-color: #7a5a15; background: #1e1a10; }
+
+.two-col { display: grid; grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); gap: 26px; align-items: start; }
+@media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+
+.table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.table th, .table td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; font-size: .92rem; }
+.table th { background: #141922; color: var(--muted); font-weight: 600; font-size: .84rem; text-transform: uppercase; letter-spacing: .03em; }
+.actions { white-space: nowrap; display: flex; gap: 10px; align-items: center; }
+
+.form-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+.stack { display: grid; gap: 12px; }
+.stack label { display: grid; gap: 5px; font-size: .92rem; color: var(--muted); }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+input, textarea, select { font: inherit; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border); background: #12161d; color: var(--text); width: 100%; }
+.field-error { color: var(--err); font-size: .83rem; }
+.form-actions { display: flex; gap: 10px; margin-top: 6px; }
+
+.alert { padding: 11px 14px; border-radius: 10px; margin: 14px 0; border: 1px solid; }
+.alert.success { background: #10281a; border-color: #1f5f38; color: #b8f0cd; }
+.alert.error { background: #2a1416; border-color: #7a2a2e; color: #f7c1c3; }
+
+.grid.gallery-admin { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.card { margin: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.card img { width: 100%; height: 150px; object-fit: cover; display: block; background: #0b0d11; }
+.card figcaption { padding: 10px 12px; font-size: .9rem; }
+.card .meta { color: var(--muted); font-size: .8rem; margin: 6px 0; }
+
+.message { background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; }
+.message.unread { border-left-color: #eab308; }
+.message.read { opacity: .78; }
+.message header { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.message time { color: var(--muted); font-size: .84rem; }
+.message p { margin: 10px 0; white-space: pre-wrap; }
+.letter { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; font-size: .9rem; }
+.widget { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: .9rem; }
+
+.pagination { display: flex; gap: 8px; margin: 20px 0; }
+.pagination a { padding: 5px 11px; border: 1px solid var(--border); border-radius: 8px; color: var(--text); }
+.pagination a.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* ---------------- Страница входа ---------------- */
+.login-page { display: grid; place-items: center; min-height: 100vh; }
+.login-box { width: min(430px, 92vw); background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 26px; }
+.login-box h1 { margin-top: 0; }
+.login-box .btn { width: 100%; }

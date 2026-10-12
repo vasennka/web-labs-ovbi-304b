@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 2 — AJAX (периодический опрос раз в 2 секунды)</title>
+    <style>
+        :root { color-scheme: dark; }
+        body { font-family: system-ui, Segoe UI, Roboto, sans-serif; max-width: 860px; margin: 24px auto; padding: 0 16px; background: #14161a; color: #e6e6e6; }
+        h1 { font-size: 1.35rem; margin-bottom: 4px; }
+        .hint { color: #9aa4b2; font-size: .9rem; margin-bottom: 18px; }
+        .hint code { background: #22262e; padding: 1px 5px; border-radius: 4px; }
+        form { display: flex; gap: 8px; margin-bottom: 16px; }
+        input, button { font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid #333a45; background: #1d2129; color: inherit; }
+        input { flex: 1; }
+        button { background: #2f6feb; border-color: #2f6feb; cursor: pointer; }
+        button:disabled { opacity: .6; cursor: progress; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { border: 1px solid #262c36; border-left: 3px solid #2f6feb; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; background: #1a1e25; }
+        .meta { color: #8b96a5; font-size: .78rem; }
+        .badge { display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: #262c36; margin-right: 6px; }
+        #stats { margin-top: 18px; color: #9aa4b2; font-size: .85rem; line-height: 1.7; border-top: 1px solid #262c36; padding-top: 12px; }
+        .nav a { color: #7aa7ff; margin-right: 12px; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <h1>Задание 2. AJAX: отправка и периодическое обновление списка</h1>
+    <p class="hint">
+        Список обновляется запросом <code>GET /api/messages</code> каждые 2 секунды через
+        <code>setInterval</code>. Откройте эту страницу <b>в двух вкладках</b> — сообщения,
+        отправленные в одной, появятся в другой. Затем откройте DevTools → Network и
+        посмотрите, сколько запросов уходит, когда новых сообщений нет.
+    </p>
+
+    <p class="nav">
+        <a href="/">React (задание 1)</a>
+        <a href="/poll.html">Comet (задание 3)</a>
+        <a href="/ws.html">WebSocket (задание 3)</a>
+        <a href="/sse.html">SSE</a>
+        <a href="/jsonp.html">JSONP</a>
+        <a href="/api/stats" target="_blank">/api/stats</a>
+    </p>
+
+    <form id="form">
+        <input id="author" value="Гость" size="10" aria-label="Автор">
+        <input id="text" placeholder="Введите сообщение и нажмите «Отправить»" autocomplete="off" aria-label="Текст сообщения">
+        <button type="submit" id="send">Отправить</button>
+    </form>
+
+    <ul id="list"></ul>
+    <div id="stats"></div>
+
+<script>
+'use strict';
+
+const listEl = document.getElementById('list');
+const statsEl = document.getElementById('stats');
+const formEl = document.getElementById('form');
+const authorEl = document.getElementById('author');
+const textEl = document.getElementById('text');
+const sendBtn = document.getElementById('send');
+
+let getCount = 0;      // сколько раз запросили список
+let postCount = 0;     // сколько раз отправили сообщение
+let lastIds = new Set();
+
+/* ---------------------------------------------------------------------------
+ * Отрисовка: перерисовываем ТОЛЬКО при изменениях, чтобы видеть,
+ * сколько лишних запросов делает периодический опрос.
+ * ------------------------------------------------------------------------- */
+function render(messages) {
+    listEl.innerHTML = '';
+    for (const m of messages) {
+        const li = document.createElement('li');
+        const strong = document.createElement('strong');
+        strong.textContent = m.author;
+        const time = document.createElement('span');
+        time.className = 'meta';
+        time.textContent = ' · ' + new Date(m.at).toLocaleTimeString();
+        const p = document.createElement('div');
+        p.textContent = m.text;                  // textContent, а не innerHTML — защита от XSS!
+
+        li.append(strong, time, p);
+        li.prepend(Object.assign(document.createElement('span'), { className: 'badge', textContent: '#' + m.id }));
+        listEl.append(li);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * GET списка сообщений (AJAX через fetch).
+ * ------------------------------------------------------------------------- */
+async function loadMessages() {
+    getCount++;
+    try {
+        const response = await fetch('/api/messages');
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        const data = await response.json();
+        render(data.messages);
+        updateStats(data.messages.length, 'список получен');
+    } catch (err) {
+        updateStats(0, 'ошибка загрузки: ' + err.message);
+    }
+}
+
+/* ---------------------------------------------------------------------------
+ * POST нового сообщения.
+ * ------------------------------------------------------------------------- */
+formEl.addEventListener('submit', async (event) => {
+    event.preventDefault();                      // не даём форме перезагрузить страницу
+    const text = textEl.value.trim();
+    if (!text) return;
+
+    sendBtn.disabled = true;
+    try {
+        const response = await fetch('/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ author: authorEl.value.trim() || 'Гость', text })
+        });
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        textEl.value = '';
+        postCount++;
+        await loadMessages();                    // сразу показываем своё сообщение
+    } catch (err) {
+        updateStats(0, 'ошибка отправки: ' + err.message);
+    } finally {
+        sendBtn.disabled = false;
+        textEl.focus();
+    }
+});
+
+function updateStats(messageCount, note) {
+    statsEl.innerHTML =
+        `GET-запросов: <b>${getCount}</b> · POST-запросов: <b>${postCount}</b> · ` +
+        `сообщений на сервере: <b>${messageCount}</b> · ${note}<br>` +
+        `Практический вывод: пока новых сообщений нет, каждый цикл <code>setInterval</code> ` +
+        `отправляет «пустой» запрос — тратится сеть и ресурсы сервера. ` +
+        `Сравните это с long polling (<a href="/poll.html">poll.html</a>) и WebSocket (<a href="/ws.html">ws.html</a>).`;
+}
+
+/* ---------------------------------------------------------------------------
+ * Периодический опрос: каждые 2 секунды.
+ * ------------------------------------------------------------------------- */
+loadMessages();
+const intervalId = setInterval(loadMessages, 2000);
+
+// При закрытии вкладки полезно снять таймер (в демонстрации это не критично,
+// но в реальном приложении так делают, чтобы не осталось «мёртвых» опросов).
+window.addEventListener('beforeunload', () => clearInterval(intervalId));
+
+/* ДОПОЛНИТЕЛЬНО: слушаем /api/stats раз в 5 секунд, чтобы видеть нагрузку.
+ * Именно из-за таких «двойных» таймеров на защите удобно объяснять,
+ * почему транспорт нужно выбирать осознанно. */
+setInterval(async () => {
+    try {
+        const response = await fetch('/api/stats');
+        const stats = await response.json();
+        window.__stats = stats;
+    } catch { /* игнорируем */ }
+}, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ознакомительно — Server-Sent Events (SSE)</title>
+    <style>
+        :root { color-scheme: dark; }
+        body { font-family: system-ui, Segoe UI, Roboto, sans-serif; max-width: 860px; margin: 24px auto; padding: 0 16px; background: #14161a; color: #e6e6e6; }
+        h1 { font-size: 1.3rem; }
+        .hint { color: #9aa4b2; font-size: .9rem; line-height: 1.6; }
+        .hint code { background: #22262e; padding: 1px 5px; border-radius: 4px; }
+        pre { background: #1a1e25; border: 1px solid #262c36; border-radius: 8px; padding: 12px; overflow: auto; }
+        .nav a { color: #7aa7ff; margin-right: 12px; font-size: .9rem; }
+        button { font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid #2f6feb; background: #2f6feb; color: #fff; cursor: pointer; }
+        #state { margin: 10px 0; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <h1>Ознакомительно: Server-Sent Events</h1>
+    <p class="hint">
+        SSE — односторонний канал <b>от сервера к клиенту</b> поверх обычного HTTP.
+        Сервер отвечает с заголовком <code>Content-Type: text/event-stream</code> и пишет
+        события в формате <code>data: ...</code>. Браузер переподключается сам, а протокол
+        восстановления после обрыва встроен (заголовок <code>id:</code> + <code>Last-Event-ID</code>).
+        В отличие от WebSocket, клиент не может отправить данные по этому каналу —
+        для отправки используется обычный POST.
+    </p>
+
+    <p class="nav">
+        <a href="/">React (задание 1)</a>
+        <a href="/ajax.html">AJAX (задание 2)</a>
+        <a href="/poll.html">Comet (задание 3)</a>
+        <a href="/ws.html">WebSocket (задание 3)</a>
+        <a href="/jsonp.html">JSONP</a>
+    </p>
+
+    <button id="send">Отправить тестовое сообщение (POST)</button>
+    <div id="state">состояние: —</div>
+    <pre id="log"></pre>
+
+<script>
+'use strict';
+const logEl = document.getElementById('log');
+const stateEl = document.getElementById('state');
+
+function append(text) {
+    logEl.textContent += text + '\n';
+}
+
+/* EventSource сам держит соединение и ПЕРЕПОДКЛЮЧАЕТСЯ при обрыве. */
+const source = new EventSource('/api/events');
+
+source.onopen = () => { stateEl.textContent = 'состояние: соединение открыто'; append('· соединение открыто'); };
+source.onerror = () => { stateEl.textContent = 'состояние: обрыв — браузер переподключится автоматически'; append('· ошибка/обрыв (EventSource переподключится)'); };
+
+// Своё имя события: server пишет "event: message\ndata: {...}"
+source.addEventListener('message', (event) => {
+    const message = JSON.parse(event.data);
+    append(`сообщение #${message.id} от ${message.author}: ${message.text}`);
+});
+
+// Служебное событие при подключении
+source.addEventListener('hello', (event) => {
+    append('hello: ' + event.data);
+});
+
+document.getElementById('send').addEventListener('click', async () => {
+    await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ author: 'SSE-тест', text: 'Сообщение через обычный POST' })
+    });
+});
+</script>
+</body>
+</html>

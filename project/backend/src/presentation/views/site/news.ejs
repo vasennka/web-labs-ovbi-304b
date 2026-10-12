@@ -1,0 +1,39 @@
+<%- include('../partials/site-header') %>
+
+<section class="page-head">
+    <h1>Новости студии</h1>
+    <p class="lead">Всего записей: <b><%= total %></b>. Фильтр по тегу — ссылками.</p>
+</section>
+
+<% if (tags.length) { %>
+<nav class="filters tags">
+    <a class="<%= !currentTag ? 'active' : '' %>" href="/site/news">все теги</a>
+    <% tags.forEach(function (tag) { %>
+        <a class="<%= currentTag === tag ? 'active' : '' %>" href="/site/news?tag=<%= encodeURIComponent(tag) %>"><%= tag %></a>
+    <% }); %>
+</nav>
+<% } %>
+
+<div class="news-list">
+    <% items.forEach(function (item) { %>
+        <article class="card news">
+            <time><%= new Date(item.publishedAt).toLocaleString('ru-RU') %></time>
+            <h2><a href="/site/news/<%= item.slug %>"><%= item.title %></a></h2>
+            <p><%= item.excerpt %></p>
+            <p class="meta">
+                <% (item.tags || []).forEach(function (t) { %><span class="tag"><%= t %></span><% }); %>
+            </p>
+        </article>
+    <% }); %>
+</div>
+
+<% if (pages > 1) { %>
+<nav class="pagination">
+    <% for (let p = 1; p <= pages; p++) { %>
+        <a class="<%= p === page ? 'active' : '' %>"
+           href="/site/news?page=<%= p %><%= currentTag ? '&tag=' + encodeURIComponent(currentTag) : '' %>"><%= p %></a>
+    <% } %>
+</nav>
+<% } %>
+
+<%- include('../partials/site-footer') %>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Задание 3 — WebSocket</title>
+    <style>
+        :root { color-scheme: dark; }
+        body { font-family: system-ui, Segoe UI, Roboto, sans-serif; max-width: 860px; margin: 24px auto; padding: 0 16px; background: #14161a; color: #e6e6e6; }
+        h1 { font-size: 1.35rem; margin-bottom: 4px; }
+        .hint { color: #9aa4b2; font-size: .9rem; margin-bottom: 18px; }
+        .hint code { background: #22262e; padding: 1px 5px; border-radius: 4px; }
+        form { display: flex; gap: 8px; margin-bottom: 12px; }
+        input, button { font: inherit; padding: 9px 12px; border-radius: 8px; border: 1px solid #333a45; background: #1d2129; color: inherit; }
+        input { flex: 1; }
+        button { background: #7c3aed; border-color: #7c3aed; cursor: pointer; }
+        button:disabled { opacity: .55; cursor: not-allowed; }
+        ul { list-style: none; padding: 0; margin: 0; }
+        li { border: 1px solid #262c36; border-left: 3px solid #7c3aed; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; background: #1a1e25; }
+        li.own { border-left-color: #eab308; }
+        .meta { color: #8b96a5; font-size: .78rem; }
+        .badge { display: inline-block; font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: #262c36; margin-right: 6px; }
+        #status { font-size: .9rem; margin: 8px 0 14px; }
+        .up { color: #22c55e; } .down { color: #ef4444; } .pending { color: #eab308; }
+        #stats { margin-top: 18px; color: #9aa4b2; font-size: .85rem; line-height: 1.7; border-top: 1px solid #262c36; padding-top: 12px; }
+        .nav a { color: #7aa7ff; margin-right: 12px; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <h1>Задание 3. WebSocket: одно постоянное двустороннее соединение</h1>
+    <p class="hint">
+        Соединение открывается один раз: <code>new WebSocket("ws://localhost:3000/ws")</code>.
+        После события <code>onopen</code> и клиент, и сервер могут писать в любой момент —
+        без новых HTTP-запросов. Откройте страницу в двух вкладках и отправьте сообщение.
+    </p>
+
+    <p class="nav">
+        <a href="/">React (задание 1)</a>
+        <a href="/ajax.html">AJAX (задание 2)</a>
+        <a href="/poll.html">Comet (задание 3)</a>
+        <a href="/sse.html">SSE</a>
+        <a href="/api/stats" target="_blank">/api/stats</a>
+    </p>
+
+    <form id="form">
+        <input id="author" value="Гость" size="10" aria-label="Автор">
+        <input id="text" placeholder="Сообщение уйдёт только через WebSocket" autocomplete="off" aria-label="Текст">
+        <button type="submit" id="send" disabled>Отправить</button>
+    </form>
+
+    <div id="status" class="pending">состояние: подключение…</div>
+    <ul id="list"></ul>
+    <div id="stats"></div>
+
+<script>
+'use strict';
+
+const listEl = document.getElementById('list');
+const statusEl = document.getElementById('status');
+const statsEl = document.getElementById('stats');
+const formEl = document.getElementById('form');
+const authorEl = document.getElementById('author');
+const textEl = document.getElementById('text');
+const sendBtn = document.getElementById('send');
+
+let sent = 0;
+let received = 0;
+let socket = null;
+let reconnectTimer = null;
+
+/* ---------------------------------------------------------------------------
+ * Подключение. Протокол в URL: ws:// (или wss:// для TLS). Соединение
+ * устанавливается асинхронно, поэтому отправлять данные можно ТОЛЬКО в onopen.
+ * ------------------------------------------------------------------------- */
+function connect() {
+    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    socket = new WebSocket(`${protocol}://${location.host}/ws`);
+
+    socket.onopen = () => {
+        statusEl.className = 'up';
+        statusEl.textContent = 'состояние: соединение открыто ✔ (readyState = 1)';
+        sendBtn.disabled = false;
+    };
+
+    socket.onmessage = (event) => {
+        // Сервер присылает JSON: { type: 'history' | 'message', ... }
+        const payload = JSON.parse(event.data);
+        if (payload.type === 'history') {
+            payload.messages.forEach(appendMessage);
+            received = payload.messages.length;
+        } else if (payload.type === 'message') {
+            appendMessage(payload.message, true);
+            received++;
+        }
+    };
+
+    socket.onerror = () => {
+        statusEl.className = 'down';
+        statusEl.textContent = 'состояние: ошибка соединения (частая причина — сервер не установил пакет ws)';
+    };
+
+    socket.onclose = (event) => {
+        statusEl.className = 'down';
+        statusEl.textContent = `состояние: соединение закрыто (код ${event.code}) — переподключаюсь через 2 с`;
+        sendBtn.disabled = true;
+        // В реальных приложениях делают автопереподключение с backoff
+        clearTimeout(reconnectTimer);
+        reconnectTimer = setTimeout(connect, 2000);
+    };
+}
+
+function appendMessage(message, own = false) {
+    const li = document.createElement('li');
+    if (own) li.className = 'own';
+
+    const badge = document.createElement('span');
+    badge.className = 'badge';
+    badge.textContent = '#' + message.id;
+
+    const strong = document.createElement('strong');
+    strong.textContent = message.author;
+
+    const time = document.createElement('span');
+    time.className = 'meta';
+    time.textContent = ' · ' + new Date(message.at).toLocaleTimeString();
+
+    const p = document.createElement('div');
+    p.textContent = message.text;      // не innerHTML — защита от XSS
+
+    li.append(badge, strong, time, p);
+    listEl.prepend(li);
+
+    statsEl.textContent =
+        `отправлено клиентом: ${sent} · получено: ${received} · HTTP-запросов на обмен: 0 ` +
+        `(всё идёт по одному WebSocket-соединению).`;
+}
+
+formEl.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const text = textEl.value.trim();
+    if (!text) return;
+
+    // readyState: 0 CONNECTING, 1 OPEN, 2 CLOSING, 3 CLOSED
+    if (socket.readyState !== WebSocket.OPEN) {
+        statusEl.textContent = 'состояние: нельзя отправлять — соединение не открыто';
+        return;
+    }
+
+    socket.send(JSON.stringify({ author: authorEl.value.trim() || 'Гость', text }));
+    sent++;
+    textEl.value = '';
+    textEl.focus();
+});
+
+connect();
+window.addEventListener('beforeunload', () => {
+    clearTimeout(reconnectTimer);
+    if (socket) socket.close(1000, 'вкладка закрыта');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+</main>
+<footer class="site-footer">
+    <div class="wrap">
+        <div class="footer-nav">
+            <div>
+                <h4>Разделы</h4>
+                <a href="/site/about">О студии</a>
+                <a href="/site/gallery">Галерея</a>
+                <a href="/site/news">Новости</a>
+                <a href="/site/contacts">Контакты</a>
+            </div>
+            <div>
+                <h4>Контакты</h4>
+                <p><%= about.phone %></p>
+                <p><a href="mailto:<%= about.email %>"><%= about.email %></a></p>
+                <p><%= about.address %></p>
+            </div>
+            <div>
+                <h4>Часы работы</h4>
+                <p><%= about.workHours %></p>
+            </div>
+            <div>
+                <h4>Технологии</h4>
+                <p>Node.js + Express + EJS</p>
+                <p>React (SPA) + REST API</p>
+                <p>Интеграции: GitHub SDK, Open-Meteo</p>
+            </div>
+        </div>
+        <p class="copy">© <%= new Date().getFullYear() %> Фотостудия PRISMA. Учебный проект (тема 25).</p>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,62 @@
+/**
+ * Конфигурация приложения.
+ * Единственное место, где читаются переменные окружения (12-factor).
+ * Все остальные слои получают готовый объект конфигурации — это упрощает
+ * тестирование (в тестах подменяем config).
+ */
+
+'use strict';
+
+const path = require('node:path');
+
+const num = (value, fallback) => (Number.isFinite(Number(value)) ? Number(value) : fallback);
+
+const root = path.resolve(__dirname, '..'); // .../project/backend
+
+const config = {
+    env: process.env.NODE_ENV || 'development',
+    http: {
+        port: num(process.env.PORT, 4000),
+        host: process.env.HOST || '127.0.0.1'
+    },
+    session: {
+        secret: process.env.SESSION_SECRET || 'very-secret-change-me',
+        name: 'prisma.sid',
+        maxAge: 1000 * 60 * 60 * 8 // 8 часов
+    },
+    admin: {
+        login: process.env.ADMIN_LOGIN || 'admin',
+        password: process.env.ADMIN_PASSWORD || 'admin123'
+    },
+    // Хранилище: 'json' (файл) или 'sqlite' (node:sqlite).
+    // Именно благодаря порту Database смена драйвера — одна строка конфигурации.
+    data: {
+        driver: process.env.DATA_DRIVER || 'json',
+        jsonFile: path.join(root, 'data', 'db.json'),
+        sqliteFile: path.join(root, 'data', 'db.sqlite')
+    },
+    uploads: {
+        dir: path.resolve(root, process.env.UPLOAD_DIR || './data/uploads'),
+        // Ограничения загрузки файлов (защита от «тяжёлых» и опасных файлов)
+        maxFileSize: 4 * 1024 * 1024, // 4 МБ
+        allowedMime: ['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/svg+xml']
+    },
+    frontend: {
+        distDir: path.resolve(root, process.env.FRONTEND_DIST || '../frontend/dist')
+    },
+    integrations: {
+        github: {
+            owner: process.env.GITHUB_OWNER || 'nodejs',
+            repo: process.env.GITHUB_REPO || 'node'
+        },
+        weather: {
+            lat: num(process.env.WEATHER_CITY_LAT, 55.7558),
+            lon: num(process.env.WEATHER_CITY_LON, 37.6173),
+            city: process.env.WEATHER_CITY_NAME || 'Москва'
+        },
+        // Время жизни кэша ответов внешних сервисов (мс)
+        cacheTtl: 1000 * 60 * 10
+    }
+};
+
+module.exports = config;

@@ -1,0 +1,53 @@
+<%- include('../partials/site-header') %>
+
+<section class="hero">
+    <h1>Фотостудия, которая любит свет</h1>
+    <p class="lead">Портрет, свадьба, репортаж и предметная съёмка. Студия на Пресне + выезд по Москве и области.</p>
+    <div class="hero-actions">
+        <a class="btn primary" href="/site/gallery">Смотреть галерею</a>
+        <a class="btn" href="/site/contacts">Заказать съёмку</a>
+    </div>
+    <p class="note">Эта страница отрисована на сервере шаблонизатором <b>EJS</b>.
+        Та же страница на React доступна по адресу <a href="/">/</a> и получает данные из REST API.</p>
+</section>
+
+<section>
+    <div class="section-head">
+        <h2>Последние работы</h2>
+        <a href="/site/gallery">вся галерея →</a>
+    </div>
+    <div class="grid">
+        <% gallery.forEach(function (photo) { %>
+            <figure class="card">
+                <img src="<%= photo.imageUrl %>" alt="<%= photo.title %>" loading="lazy">
+                <figcaption>
+                    <b><%= photo.title %></b>
+                    <span class="tag"><%= photo.category %></span>
+                </figcaption>
+            </figure>
+        <% }); %>
+    </div>
+</section>
+
+<section>
+    <div class="section-head">
+        <h2>Новости студии</h2>
+        <a href="/site/news">все новости →</a>
+    </div>
+    <div class="news-list">
+        <% news.forEach(function (item) { %>
+            <article class="card news">
+                <time><%= new Date(item.publishedAt).toLocaleDateString('ru-RU') %></time>
+                <h3><a href="/site/news/<%= item.slug %>"><%= item.title %></a></h3>
+                <p><%= item.excerpt %></p>
+                <p class="meta">
+                    <% (item.tags || []).forEach(function (t) { %>
+                        <span class="tag"><%= t %></span>
+                    <% }); %>
+                </p>
+            </article>
+        <% }); %>
+    </div>
+</section>
+
+<%- include('../partials/site-footer') %>

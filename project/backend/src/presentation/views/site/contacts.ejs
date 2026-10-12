@@ -1,0 +1,76 @@
+<%- include('../partials/site-header') %>
+
+<section class="page-head">
+    <h1>Контакты и обратная связь</h1>
+    <p class="lead">Форма обратной связи работает без JavaScript: обычный POST и серверная валидация.</p>
+</section>
+
+<div class="two-col">
+    <section>
+        <h2>Написать нам</h2>
+
+        <% if (sent) { %>
+            <div class="alert success">Спасибо! Сообщение отправлено — мы ответим на указанный e-mail.</div>
+        <% } %>
+        <% if (errors.form) { %>
+            <div class="alert error"><%= errors.form %></div>
+        <% } %>
+
+        <form method="post" action="/site/contacts" class="stack" novalidate>
+            <label>
+                Ваше имя *
+                <input type="text" name="name" value="<%= values.name || '' %>" required minlength="2">
+                <% if (errors.name) { %><span class="field-error"><%= errors.name %></span><% } %>
+            </label>
+
+            <label>
+                E-mail *
+                <input type="email" name="email" value="<%= values.email || '' %>" required>
+                <% if (errors.email) { %><span class="field-error"><%= errors.email %></span><% } %>
+            </label>
+
+            <label>
+                Сообщение *
+                <textarea name="message" rows="6" required minlength="10"><%= values.message || '' %></textarea>
+                <% if (errors.message) { %><span class="field-error"><%= errors.message %></span><% } %>
+            </label>
+
+            <label>
+                Оценка сайта (1–5)
+                <input type="number" name="rating" min="1" max="5" value="<%= values.rating || '' %>">
+                <% if (errors.rating) { %><span class="field-error"><%= errors.rating %></span><% } %>
+            </label>
+
+            <!-- honeypot: люди это поле не видят, боты заполняют -->
+            <label class="honeypot">Ваш сайт
+                <input type="text" name="website" tabindex="-1" autocomplete="off">
+            </label>
+
+            <button class="btn primary" type="submit">Отправить сообщение</button>
+            <p class="muted small">Нажимая «Отправить», вы соглашаетесь на обработку персональных данных.</p>
+        </form>
+    </section>
+
+    <aside>
+        <h2>Как нас найти</h2>
+        <table class="kv">
+            <tr><th>Адрес</th><td><%= about.address %></td></tr>
+            <tr><th>Телефон</th><td><%= about.phone %></td></tr>
+            <tr><th>E-mail</th><td><%= about.email %></td></tr>
+            <tr><th>Часы</th><td><%= about.workHours %></td></tr>
+        </table>
+
+        <h2>Что происходит с сообщением</h2>
+        <ol class="steps">
+            <li>Сервер валидирует поля доменной сущностью <code>ContactMessage</code>.</li>
+            <li>Сообщение сохраняется в базу (файл или SQLite).</li>
+            <li>Администратору уходит письмо через порт <code>Mailer</code>
+                (в учебном проекте письмо печатается в консоль сервера).</li>
+            <li>Сообщение появляется в админке в разделе «Обратная связь».</li>
+        </ol>
+        <p class="muted small">В React-версии та же логика вызывается через
+            <code>POST /api/v1/contact</code> из самодельных контролов формы.</p>
+    </aside>
+</div>
+
+<%- include('../partials/site-footer') %>

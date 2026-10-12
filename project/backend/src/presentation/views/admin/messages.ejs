@@ -1,0 +1,53 @@
+<%- include('../partials/admin-header') %>
+
+<div class="section-head">
+    <h1>Обратная связь</h1>
+    <div>
+        <a class="btn small <%= !onlyUnread ? 'primary' : '' %>" href="/admin/messages">все (<%= total %>)</a>
+        <a class="btn small <%= onlyUnread ? 'primary' : '' %>" href="/admin/messages?filter=unread">непрочитанные (<%= unread %>)</a>
+    </div>
+</div>
+
+<% if (items.length === 0) { %>
+    <p class="muted">Сообщений нет. Проверьте форму обратной связи на публичной части сайта.</p>
+<% } %>
+
+<% items.forEach(function (msg) { %>
+    <article class="message <%= msg.isRead ? 'read' : 'unread' %>">
+        <header>
+            <div>
+                <b><%= msg.name %></b>
+                <a href="mailto:<%= msg.email %>">&lt;<%= msg.email %>&gt;</a>
+                <% if (msg.rating) { %><span class="tag">оценка: <%= msg.rating %>/5</span><% } %>
+            </div>
+            <time><%= new Date(msg.createdAt).toLocaleString('ru-RU') %></time>
+        </header>
+        <p><%= msg.message %></p>
+        <p class="muted small">ID: <%= msg.id %> · User-Agent: <%= msg.userAgent || '—' %></p>
+
+        <div class="actions">
+            <form method="post" action="/admin/messages/<%= msg.id %>/read" class="inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="isRead" value="<%= msg.isRead ? 'false' : 'true' %>">
+                <button class="btn small" type="submit"><%= msg.isRead ? 'пометить непрочитанным' : 'пометить прочитанным' %></button>
+            </form>
+
+            <form method="post" action="/admin/messages/<%= msg.id %>/delete" class="inline"
+                  onsubmit="return confirm('Удалить сообщение?')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button class="link danger" type="submit">удалить</button>
+            </form>
+        </div>
+    </article>
+<% }); %>
+
+<% if (pages > 1) { %>
+<nav class="pagination">
+    <% for (let p = 1; p <= pages; p++) { %>
+        <a class="<%= p === page ? 'active' : '' %>"
+           href="/admin/messages?page=<%= p %><%= onlyUnread ? '&filter=unread' : '' %>"><%= p %></a>
+    <% } %>
+</nav>
+<% } %>
+
+<%- include('../partials/admin-footer') %>

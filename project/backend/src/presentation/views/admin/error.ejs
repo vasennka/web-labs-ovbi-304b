@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ошибка <%= status %></title>
+    <link rel="stylesheet" href="/static/admin.css">
+</head>
+<body>
+<main class="wrap admin">
+    <h1>Ошибка <%= status %></h1>
+    <div class="alert error"><%= message %></div>
+
+    <% if (details) { %>
+        <h2>Подробности</h2>
+        <ul>
+            <% Object.entries(details).forEach(function (entry) { %>
+                <li><b><%= entry[0] %>:</b> <%= entry[1] %></li>
+            <% }); %>
+        </ul>
+    <% } %>
+
+    <p>
+        <a class="btn" href="/admin">В админку</a>
+        <a class="btn" href="/site/">На сайт</a>
+    </p>
+    <% if (!user) { %>
+        <p class="muted">Возможно, срок сессии истёк — войдите заново: <a href="/admin/login">/admin/login</a></p>
+    <% } %>
+</main>
+</body>
+</html>
