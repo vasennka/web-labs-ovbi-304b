@@ -16,6 +16,7 @@ project/backend/data/db.json
 project/backend/data/db.sqlite
 project/backend/data/db.sqlite-shm
 project/backend/data/db.sqlite-wal
+project/backend/data/smoke-test-db.json
 
 # --- загруженные через админку файлы ---
 project/backend/data/uploads/*
