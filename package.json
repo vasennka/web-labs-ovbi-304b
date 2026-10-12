@@ -1,8 +1,8 @@
 {
-  "name": "js-labs",
+  "name": "labs-js-node-react",
   "version": "1.0.0",
   "private": true,
-  "description": "Лабораторные работы №1–8 по JavaScript/Node.js/React + проект (тема 25)",
+  "description": "Лабораторные работы №1–8 по JavaScript/Node.js/React и проект «Фотостудия PRISMA» (тема 25)",
   "scripts": {
     "laba1": "node laba1.js",
     "laba2": "node laba2.js",
@@ -12,12 +12,9 @@
     "laba6": "node laba6.js",
     "laba7": "node laba7.js",
     "laba8": "node laba8.js",
-    "laba8:selftest": "node laba8.js --selftest",
-    "labs:all": "node tools/run-labs.js",
-    "docs:word": "node tools/build-all-docs.js",
-    "laba2:git": "powershell -ExecutionPolicy Bypass -File laba2/git-demo.ps1",
     "project:install": "npm --prefix project run install:all",
-    "project:dev": "npm --prefix project run dev",
+    "project:seed": "npm --prefix project/backend run seed",
+    "project:build": "npm --prefix project run build",
     "project:start": "npm --prefix project run start"
   },
   "dependencies": {
