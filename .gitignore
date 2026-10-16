@@ -39,3 +39,7 @@ laba2/git-demo/
 *.log
 .DS_Store
 Thumbs.db
+# --- личные заметки с токенами и паролями (не выкладывать!) ---
+веб.txt
+*токен*.txt
+*token*.txt
